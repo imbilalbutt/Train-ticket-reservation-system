@@ -1,0 +1,66 @@
+#server:
+#  port: 8081
+#
+#spring:
+#  profiles:
+#    active: dev
+#
+#---
+#
+#spring:
+#  profiles: dev
+#  datasource:
+#    driver-class-name: org.postgresql.Driver
+#    password: passw0rd
+#    url: jdbc:postgresql://localhost:5432/lhr_rsv
+#    username: postgres
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#    show-sql: false
+#    properties:
+#      hibernate:
+#        dialect: org.hibernate.dialect.PostgreSQL81Dialect
+#welcome:
+#  message: Welcome to Dev!!
+#
+#---
+#
+#spring:
+#  profiles: qa
+#  datasource:
+#    driver-class-name: org.postgresql.Driver
+#    password: passw0rd
+#    url: jdbc:postgresql://localhost:5432/lhr_rsv-qa
+#    username: postgres
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#    show-sql: true
+#
+#
+#welcome:
+#  message: Welcome to QA!!
+#
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: "*"
+#        exclude: "env,beans"
+#
+#---
+#
+#spring:
+#  profiles: prod
+#  datasource:
+#    driver-class-name: org.postgresql.Driver
+#    password: passw0rd
+#    url: jdbc:postgresql://localhost:5432/lhr_rsv-prod
+#    username: postgres
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#    show-sql: false
+#welcome:
+#  message: Welcome to Production!!
