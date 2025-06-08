@@ -1,10 +1,6 @@
-Below is a polished, professional `README.md` for your repository. Feel free to customize details like endpoint URLs, usage examples, badges, and author info as desired.
+# A Train Reservation System meets Java Spring boot 🎫
 
----
-
-# Spring Reservation System 🎫
-
-A fully featured train reservation REST API built with Java and Spring.
+A fully featured train reservation REST API built with Java framework Spring boot.
 
 ## 🚀 Overview
 
