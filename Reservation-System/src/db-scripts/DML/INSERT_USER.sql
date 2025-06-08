@@ -1,7 +1,59 @@
-INSERT INTO public.users(
-    user_id, created_by, created_date, locked, modified_by, modified_date, active_status, cell_number, cnic_number, first_name, home_address, last_name)
-VALUES (1, 'SQL', '2022-04-09T18:00:00.000', false, 'SQL', '2022-04-09T18:00:00.000', true, '+923075555104', '35202-7577446-1', 'Bilal Ahmad', 'Sabzazar Multan Road', 'Butt');
 
-INSERT INTO public.users(
-    user_id, created_by, created_date, locked, modified_by, modified_date, active_status, cell_number, cnic_number, first_name, home_address, last_name)
-VALUES (2, 'SQL', '2022-04-09T18:00:00.000', false, 'SQL', '2022-04-09T18:00:00.000', true, '+923075555104', '35202-7577446-1', 'Suleman Ahmad', 'Sabzazar Multan Road', 'Butt');
+
+INSERT INTO lhr_rsv.users(
+    user_id,
+      created_by,
+      created_date,
+      is_non_locked,
+      modified_by,
+      modified_date,
+      active_status,
+      cell_number,
+      cnic_number,
+      email,
+      first_name,
+      home_address,
+      last_name,
+      password,
+      reconfirm_password,
+      roles,
+      username)
+VALUES (1,
+        'SQL',
+        '2022-04-09T18:00:00.000',
+        true,
+        'SQL',
+        '2022-04-09T18:00:00.000',
+        true,
+        '+923075555104',
+        '35202-7577446-1',
+        'bilal.ahamad125@yahoo.com',
+        'Bilal Ahmad',
+        'Sabzazar Multan Road',
+        'Butt',
+        'passw0rd',
+        'passw0rd',
+        'user',
+        'imbilalbutt'),
+
+    (2,
+        'SQL',
+        '2022-04-09T18:00:00.000',
+        true,
+        'SQL',
+        '2022-04-09T18:00:00.000',
+        true,
+        '+923075555104',
+        '35202-7577446-1',
+        'bilal.ahamad126@yahoo.com',
+        'Bilal Ahmad',
+        'Sabzazar Multan Road',
+        'Butt',
+        'UIsy3HSLXXxdEirFqj2Qrw==',
+        'UIsy3HSLXXxdEirFqj2Qrw==',
+        'user',
+        'imbilalbutt2');
+
+-- INSERT INTO users(
+--     user_id, created_by, created_date, locked, modified_by, modified_date, active_status, cell_number, cnic_number, first_name, home_address, last_name)
+-- VALUES (2, 'SQL', '2022-04-09T18:00:00.000', true, 'SQL', '2022-04-09T18:00:00.000', true, '+923075555104', '35202-7577446-1', 'Suleman Ahmad', 'Sabzazar Multan Road', 'Butt');

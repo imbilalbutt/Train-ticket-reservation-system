@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 import pk.imbilalbutt.bussiness.dto.UserDto;
@@ -26,6 +28,7 @@ public class UserRestController {
     @PostMapping(path = "/save",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<UserDto> save(@RequestBody UserDto dto) {
 
         LOG.info("UserRestController - save() called in : {} ", dto);
@@ -45,6 +48,7 @@ public class UserRestController {
     }
 
     @GetMapping("/list")
+//    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<UserDto>> getAll() {
 
         LOG.info("UserRestController - getAll() called in.");
@@ -61,8 +65,8 @@ public class UserRestController {
     }
 
     @GetMapping(path = "/get/{id}",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<UserDto> get(@PathVariable("id") Long id) {
 
         LOG.info("UserRestController - get() called in : {}", id);
@@ -84,6 +88,7 @@ public class UserRestController {
     @DeleteMapping(path = "/delete/{id}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<String> delete(@PathVariable("id") Long id) {
 
         LOG.info("UserRestController - delete() called in : {} ", id);
@@ -121,5 +126,7 @@ public class UserRestController {
         LOG.error("UserRestController - changeStatus() failed.");
         return ResponseEntity.notFound().build();
     }
+
+
 
 }

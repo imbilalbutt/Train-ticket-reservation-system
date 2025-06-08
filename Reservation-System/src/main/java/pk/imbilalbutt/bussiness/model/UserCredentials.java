@@ -34,14 +34,18 @@ public class UserCredentials extends BaseEntity implements UserDetails {
     }
 
     public UserCredentials(User user) {
-        this.username = user.getUsername();
-        this.password = user.getPassword();
-        this.reconfirmedPassword = user.getReconfirmedPassword();
-        this.status = user.getStatus();
-        this.authorities = Arrays.stream(user.getRoles().split(","))
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+        this.user = user;
     }
+
+//    public UserCredentials(User user) {
+//        this.username = user.getUsername();
+//        this.password = user.getPassword();
+//        this.reconfirmedPassword = user.getReconfirmedPassword();
+//        this.status = user.getStatus();
+//        this.authorities = Arrays.stream(user.getRoles().split(","))
+//                .map(SimpleGrantedAuthority::new)
+//                .collect(Collectors.toList());
+//    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -50,32 +54,32 @@ public class UserCredentials extends BaseEntity implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return getStatus();
+        return user.getStatus();
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return getIsNonlocked();
+        return user.getIsNonlocked();
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return getStatus();
+        return user.getStatus();
     }
 
     @Override
     public boolean isEnabled() {
-        return getStatus();
+        return user.getStatus();
     }
 
     @Override
     public String getUsername() {
-        return username;
+        return user.getUsername();
     }
 
     @Override
     public String getPassword() {
-        return password;
+        return user.getPassword();
     }
 
 }

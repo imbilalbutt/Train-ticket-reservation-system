@@ -1,14 +1,16 @@
 package pk.imbilalbutt.bussiness.service;
 
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pk.imbilalbutt.bussiness.dto.UserCredentialsDto;
-import pk.imbilalbutt.bussiness.model.UserCredentials;
+import pk.imbilalbutt.bussiness.model.User;
 
-public interface UserCredentialsService extends UserDetailsService, BaseService<UserCredentials, UserCredentialsDto> {
+public interface UserCredentialsService extends UserDetailsService  {
 
-    @Transactional(propagation = Propagation.REQUIRED)
-    Boolean createAccount(UserCredentialsDto userCredentialsDto) throws RuntimeException;
+    UserDetails loadUserByUsername(String username) throws RuntimeException;
+
+    UserDetails loadUserByUsername(String username, String password) throws RuntimeException;
 }
 

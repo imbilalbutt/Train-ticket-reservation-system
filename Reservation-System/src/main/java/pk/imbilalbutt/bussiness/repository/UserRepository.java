@@ -19,9 +19,13 @@ public interface UserRepository extends BaseRepository<User> {
             " WHERE u.id = :id ")
     void updateActiveStatus(Long id, Boolean status);
 
+    Optional<User> findByEmail(String email);
+
     Optional<User> findByUsername(String userName);
 
     Optional<User> findByUsernameAndPassword(String username, String password);
+
+    Optional<User> findByEmailAndPassword(String email, String password);
 //
 //    @Transactional(propagation = Propagation.REQUIRED)
 //    UserRepository findByEmailAndPasswordAndAccountNonExpired(String email, String password);

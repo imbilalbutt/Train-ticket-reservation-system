@@ -83,7 +83,6 @@ public class CourseRestController {
     }
 
     @GetMapping(path = "/get/{id}",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CourseDto> get(@PathVariable("id") Long id) {
 
@@ -104,7 +103,6 @@ public class CourseRestController {
     }
 
     @DeleteMapping(path = "/delete/{id}",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> delete(@PathVariable("id") Long id) {
 

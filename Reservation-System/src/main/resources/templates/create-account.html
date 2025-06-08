@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="ISO-8859-1">
+    <meta charset="UTF-8">
     <title>Registration</title>
     <link rel="stylesheet"
           href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
@@ -11,7 +11,7 @@
 
 <body>
 
-<!-- create navigation bar ( header) -->
+<!-- Navigation Bar -->
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">
@@ -23,109 +23,97 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#" th:href="@{/view/home/dashboard}">Home Page</a>
+            <a class="navbar-brand" th:href="@{/view/home/dashboard}">Home Page</a>
         </div>
     </div>
 </nav>
 
-<br>
-<br>
-<!-- Create HTML registration form -->
+<br><br><br>
+
+<!-- Registration Form -->
 <div class="container">
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
 
-            <!-- success message -->
+            <!-- Success Message -->
             <div th:if="${param.success}">
-                <div class="alert alert-info"> You've successfully registered to our awesome app!</div>
+                <div class="alert alert-info">You've successfully registered to our awesome app!</div>
             </div>
 
-            <h1>Registration</h1>
+            <h2>Registration</h2>
 
-            <form th:action="@{/view/home/create}" th:object="${registrationDto}" method="post" class="form-group">
+            <form th:action="@{/view/home/create}" th:object="${registrationDto}" method="post">
 
                 <div class="form-group">
-                    <label class="control-label" for="username"> Username </label>
-                    <input id="username" class="form-control" th:field="*{username}" required
-                           autofocus="autofocus"/>
+                    <label for="username">Username</label>
+                    <input id="username" class="form-control" th:field="*{username}" required autofocus />
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label" for="email"> Email </label>
-                    <input id="email" class="form-control" th:field="*{email}" required
-                           autofocus="autofocus"/>
-                </div>
-
-
-                <div class="form-group">
-                    <label class="control-label" for="password"> Password </label>
-                    <input id="password" type="password" class="form-control" th:field="*{password}" required
-                           autofocus="autofocus"/>
+                    <label for="email">Email</label>
+                    <input id="email" type="email" class="form-control" th:field="*{email}" required />
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label" for="reconfirmedPassword"> Confirm Password </label>
-                    <input id="reconfirmedPassword" type="password" class="form-control"
-                           th:field="*{reconfirmedPassword}" required
-                           autofocus="autofocus"/>
+                    <label for="password">Password</label>
+                    <input id="password" type="password" class="form-control" th:field="*{password}" required />
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label" th:for="firstName"> First Name </label>
-                    <input th:id="firstName" class="form-control" th:field="*{firstName}"
-                           required autofocus="autofocus"/>
+                    <label for="reconfirmedPassword">Confirm Password</label>
+                    <input id="reconfirmedPassword" type="password" class="form-control" th:field="*{reconfirmedPassword}" required />
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label" for="lastName"> Last Name </label>
-                    <input id="lastName" class="form-control" th:field="*{lastName}"
-                           required autofocus="autofocus"/>
+                    <label for="firstName">First Name</label>
+                    <input id="firstName" class="form-control" th:field="*{firstName}" required />
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label" for="homeAddress"> Home Address </label>
-                    <input id="homeAddress" class="form-control" th:field="*{homeAddress}"
-                           required autofocus="autofocus"/>
+                    <label for="lastName">Last Name</label>
+                    <input id="lastName" class="form-control" th:field="*{lastName}" required />
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label" for="cellNumber"> Cell Number </label>
-                    <input id="cellNumber" type="number" minlength="7" maxlength="10" class="form-control"
-                           th:field="*{cellNumber}"
-                           required autofocus="autofocus"/>
+                    <label for="homeAddress">Home Address</label>
+                    <input id="homeAddress" class="form-control" th:field="*{homeAddress}" required />
                 </div>
 
                 <div class="form-group">
-                    <label class="control-label" for="cnicNumber"> CNIC Number </label>
-                    <input id="cnicNumber" type="number" maxlength="13" class="form-control"
-                           th:field="*{cnicNumber}"
-                           required autofocus="autofocus"/>
+                    <label for="cellNumber">Cell Number</label>
+                    <input id="cellNumber" type="tel" pattern="[0-9]{10}" class="form-control" th:field="*{cellNumber}" required />
                 </div>
 
-                <select class="form-control" id="val-skill" name="role_id">
-                    <option th:each="role : ${T(pk.imbilalbutt.bussiness.common.AppConstants)}"
-                            th:value="*{role}"
-                            th:text="*{role}"></option>
-                </select>
+                <div class="form-group">
+                    <label for="cnicNumber">CNIC Number</label>
+                    <input id="cnicNumber" type="text" maxlength="13" pattern="[0-9]{13}" class="form-control" th:field="*{cnicNumber}" required />
+                </div>
 
-                <!--                <select class="form-control" id="dropDownList">-->
-                <!--                    <option value="0">select option</option>-->
-
-                <!--                    <option th:each="options : ${T(pk.imbilalbutt.bussiness.common.AppConstants.Roles).values()}"-->
-                <!--                            th:value="S{options}"-->
-                <!--                            th:text="${options}">-->
-                <!--                    </option>-->
-                <!--                    &lt;!&ndash;                    <option th:each="option : ${options}" th:value="*{role}" th:text="${option}"></option>&ndash;&gt;-->
-                <!--                </select>-->
+                <div class="form-group">
+                    <label for="role">Role</label>
+                    <select id="role" class="form-control" th:field="*{role}">
+                        <option value="">-- Select Role --</option>
+                        <option th:each="r : ${T(pk.imbilalbutt.bussiness.common.AppConstants.Roles).values()}"
+                                th:value="${r}" th:text="${r}">Role</option>
+                    </select>
+                </div>
 
                 <div class="form-group">
                     <button type="submit" class="btn btn-success">Register</button>
                     <span>Already registered?
-                                <a href="/" th:href="@{/view/home/login}"> Login here </a> </span>
+                        <a th:href="@{/view/home/login}">Login here</a>
+                    </span>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<!-- Required Bootstrap JS (optional but good to have) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+sjuKjE3Kz0sXnG5pQpU2nMyZgfmaWo2u3czCE8=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWbBvS3MuGJZ2ztzeD0Vkkdf+6FQnC4jYkA+Be6"
+        crossorigin="anonymous"></script>
 </body>
 </html>

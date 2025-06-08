@@ -1,8 +1,10 @@
 //package pk.imbilalbutt.bussiness.controller.ViewController;
 //
+//
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 //import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.http.MediaType;
 //import org.springframework.security.access.prepost.PreAuthorize;
 //import org.springframework.security.authentication.AuthenticationManager;
 //import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,7 +19,7 @@
 //import pk.imbilalbutt.bussiness.dto.UserDto;
 //import pk.imbilalbutt.bussiness.dto.request.CreateAccountRequestDTO;
 //import pk.imbilalbutt.bussiness.dto.request.LoginRequest;
-//import pk.imbilalbutt.bussiness.service.UserCredentialsService;
+////import pk.imbilalbutt.bussiness.service.UserCredentialsService;
 //import pk.imbilalbutt.bussiness.service.UserService;
 //import pk.imbilalbutt.bussiness.transformer.request.CreateAccountRequestTransformer;
 //
@@ -26,21 +28,19 @@
 //
 //@Controller
 //@RequestMapping(path = "/view/home")
-//public class AuthenticationViewController {
+//public class Authentication {
 //
-//    private static final Logger LOG = LoggerFactory.getLogger(AuthenticationRestController.class);
+//    private static final Logger LOG = LoggerFactory.getLogger(Authentication.class);
 //
 //    @Autowired
 //    public AuthenticationManager manager;
 //
-////    @Autowired
-////    public SessionRegistry sessionRegistry;
-//
 //    @Autowired
 //    public CreateAccountRequestTransformer transformer;
 //
-//    @Autowired
-//    private UserCredentialsService userCredentialsService;
+////    @Autowired
+////    public SessionRegistry sessionRegistry;
+//
 //
 //    @Autowired
 //    private UserService userService;
@@ -68,7 +68,7 @@
 //
 //        model.addAttribute("loginRequest", loginRequest);
 //
-//
+////        Return the name of HTML login page
 //        return "login";
 //    }
 //
@@ -118,16 +118,10 @@
 //        return "create-account";
 //    }
 //
-//    @PostMapping(path = "/create")
+//    @PostMapping(path = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
 //    public String registerUserAccount(@ModelAttribute("registrationDto") CreateAccountRequestDTO registrationDto) {
 //
 //        LOG.info("AuthenticationViewController - POST registerUserAccount()");
-//
-////        model.addAttribute("registrationDto", registrationDto);
-//
-//        UserCredentialsDto userCredentialsDto = transformer.transformToUserCredentialsDto(registrationDto);
-//
-//        userCredentialsService.saveOrUpdate(userCredentialsDto);
 //
 //        UserDto userDto = transformer.transformToUserDto(registrationDto);
 //
@@ -138,13 +132,6 @@
 ////        return "redirect:/create-account?success";
 //    }
 //
-//
-////    @GetMapping(value="/changePassword")
-////    public String changePassword(HttpServletRequest request, HttpServletResponse response, Model model) {
-////        SecurityContext c = SecurityContextHolder.getContext();
-////        model.addAttribute("username", ((UserCredentials) c.getAuthentication().getPrincipal()).getUsername());
-////        return "login/changePasswordPopup";
-////    }
 //
 //
 //    @GetMapping(path = "/logout")
