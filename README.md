@@ -22,7 +22,7 @@ This project implements a train reservation system backend exposing secure, REST
 
 ## 📌 Features
 
-* **User authentication & authorization** (sign-up, login, JWT or session-based tokens)
+* **User authentication & authorization** (sign-up, login, (TODO: session-based tokens))
 * CRUD operations for:
 
   * Trains
@@ -38,15 +38,16 @@ This project implements a train reservation system backend exposing secure, REST
 
 ## 💻 Tech Stack
 
-* Java 11+
+* Java 17+
 * Spring Boot
 * Spring Security
 * Spring MVC
-* Spring Data JPA (with H2 or configurable DB)
+* Spring Data JPA (with PostgreSQL Database)
 * AOP (`@Aspect`, `@Around`, `@Before`, etc.)
 * Functional mapping: `Function<Train, TrainDto>` etc.
-* Maven or Gradle build system
-* JUnit & Mockito tests
+* Maven build system
+* Docker
+* TODO: JUnit & Mockito tests
 
 ---
 
@@ -54,8 +55,8 @@ This project implements a train reservation system backend exposing secure, REST
 
 ### Prerequisites
 
-* JDK 11+ installed
-* Maven or Gradle
+* JDK 17+ installed
+* Maven
 * (Optional) Docker for a consistent environment
 
 ### Environment Setup
@@ -70,8 +71,8 @@ This project implements a train reservation system backend exposing secure, REST
 
 2. Configure application settings in `application.properties` (or `application.yml`), including:
 
-   * Database connection (default: H2 in-memory)
-   * Spring Security JWT secrets or credentials
+   * Database connection (default: PostgreSQL)
+   * Spring Security credentials
    * Customizable server port
 
 3. Build and run:
@@ -149,7 +150,27 @@ Contributions are welcome! Please:
 
 ## 📄 License
 
-This project is open source — specify your license here (e.g., MIT, Apache 2.0).
+This project is open source — MIT License.
+
+Copyright (c) 2023 Bilal Ahmad Butt
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
 ---
 
@@ -157,11 +178,11 @@ This project is open source — specify your license here (e.g., MIT, Apache 2.0
 
 Potential enhancements:
 
-* Replace in-memory DB with PostgreSQL/MySQL
+* Frontend client (Angular/React)
 * JWT authentication & refresh tokens
 * Pagination and filtering support
 * Full Swagger/OpenAPI documentation
-* Frontend client (Angular/React)
+
 
 ---
 
