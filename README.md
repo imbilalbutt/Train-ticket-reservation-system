@@ -94,7 +94,6 @@ This project implements a train reservation system backend exposing secure, REST
 | `User`          | `/api/users`                     | `GET`, `PUT`, `DELETE`         | `ADMIN`         |
 | DTO conversions | Internal; invoked in controllers | —                              | —               |
 
-⚠️ Replace with actual paths and HTTP status logic as implemented in your project.
 
 ---
 
