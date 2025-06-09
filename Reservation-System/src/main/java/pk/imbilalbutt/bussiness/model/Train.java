@@ -31,4 +31,10 @@ public class Train extends BaseEntity {
     @JoinColumn(name="FK_DESTINATION_STATION_ID")
     private Station destination;
 
+    @Column(name="CAPACITY")
+    private Long capacity;
+
+    @Column(name="OCCUPIED")
+    private Long occupied;
+
 }
