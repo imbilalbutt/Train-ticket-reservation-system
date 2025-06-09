@@ -7,9 +7,9 @@ A fully featured train reservation REST API built with Java framework Spring boo
 ![SpringBoot](https://img.shields.io/badge/Spring%20Boot-3.1.5-brightgreen)
 ![SpringJPA](https://img.shields.io/badge/Spring%20JPA-3.1.5-blue)
 ![SpringSecurity](https://img.shields.io/badge/Spring%20Security-6.1.5-red)
-![MySQL](https://img.shields.io/badge/MySQL-8.0%2B-blue)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15%2B-336791)
 ![Maven](https://img.shields.io/badge/Maven-3.9.3%2B-yellowgreen)
-
+![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-4.0-lightgrey)
 
 ## 🚀 Overview
 
