@@ -3,8 +3,10 @@ package pk.imbilalbutt.bussiness.model;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 @Entity
 @Table(name = "USERS")
@@ -33,6 +35,10 @@ public class User extends BaseEntity {
     @Column(name = "CNIC_NUMBER")
     private String cnicNumber;
 
+//    @ElementCollection
+//    @Column(name = "ROLES")
+//    private Collection<String> roles;
+
     @Column(name = "ROLES")
     private String roles;
 
@@ -57,4 +63,16 @@ public class User extends BaseEntity {
     public User() {
 
     }
+
+    public User(String username, String password, String reconfirmedPassword,
+                String email, String firstName, String lastName, String roles) {
+        this.username = username;
+        this.password = password;
+        this.reconfirmedPassword = reconfirmedPassword;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.roles = roles;
+    }
+
 }
