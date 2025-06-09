@@ -25,11 +25,14 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Check Directory
+    - name: Check Directory 1
       run: pwd
-           ls
-           cd Reservation-System
-           pwd
+
+    - name: Change Directory
+      run: cd ./Reservation-System
+
+    - name: Check Directory 3
+      run: pwd
     
     - name: Set up JDK 17
       uses: actions/setup-java@v4
