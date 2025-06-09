@@ -1,10 +1,16 @@
 package pk.imbilalbutt.bussiness.converter;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import pk.imbilalbutt.bussiness.dto.UserDto;
 import pk.imbilalbutt.bussiness.model.User;
+import pk.imbilalbutt.bussiness.model.UserCredentials;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
@@ -116,5 +122,33 @@ public class UserConverter extends BaseConverter<User, UserDto> {
         return modelList.stream()
                 .map(convertToDtoUsingLambda)
                 .collect(Collectors.toList());
+    }
+
+    public UserCredentials convertFromUserToUserCredentials(User user) {
+        UserCredentials entity = new UserCredentials();
+
+//       Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (!ObjectUtils.isEmpty(user) && !ObjectUtils.isEmpty(user.getId())) {
+            entity.setUsername(user.getUsername());
+            entity.setEmail(user.getEmail());
+            entity.setPassword(user.getPassword());
+            entity.setReconfirmedPassword(user.getReconfirmedPassword());
+
+            // TODO: set other attributes i.e: activateStatus etc
+            entity.setCreatedBy(user.getCreatedBy() == null ? authentication.getName() : user.getCreatedBy());
+            entity.setCreatedDate(user.getCreatedDate() == null ? LocalDateTime.now() : user.getCreatedDate());
+            entity.setStatus(user.getStatus() == null || user.getStatus());
+            entity.setModifiedBy(user.getModifiedBy() == null ? authentication.getName() : user.getModifiedBy());
+            entity.setModifiedDate(user.getModifiedDate() == null ? LocalDateTime.now() : user.getModifiedDate());
+            entity.setIsNonlocked(user.getIsNonlocked() == null || user.getIsNonlocked());
+
+            entity.setAuthorities(Arrays.stream(user.getRoles().split(","))
+                    .map(SimpleGrantedAuthority::new)
+                    .collect(Collectors.toList()));
+
+        }
+        return entity;
     }
 }

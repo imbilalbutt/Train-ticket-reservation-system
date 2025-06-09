@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -24,6 +25,10 @@ import java.util.logging.Logger;
 public class UserServiceImpl implements UserService {
 
     private static final Logger logger = Logger.getLogger(UserServiceImpl.class.getName());
+
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     @Qualifier("UserRepository")
@@ -90,6 +95,43 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDto getUserByEmail(UserDto dto) {
+        Optional<User> user = userRepository.findByEmail(dto.getEmail());
+        if(user.isPresent()){
+            return userConverter.convertToDto(user.get());
+        }
+        return null;
+    }
+
+    @Override
+    public UserDto getUserByUsername(UserDto dto) {
+        Optional<User> user = userRepository.findByUsername(dto.getUsername());
+        if(user.isPresent()){
+            return userConverter.convertToDto(user.get());
+        }
+        return null;
+    }
+
+    @Override
+    public UserDto getUserByUsernameAndPassword(UserDto dto) {
+        Optional<User> user = userRepository.findByUsernameAndPassword(dto.getUsername(), passwordEncoder.encode(dto.getPassword()));
+        if(user.isPresent()){
+            return userConverter.convertToDto(user.get());
+        }
+        return null;
+    }
+
+    @Override
+    public UserDto getUserByEmailAndPassword(UserDto dto) {
+        Optional<User> user = userRepository.findByEmailAndPassword(dto.getEmail(), passwordEncoder.encode(dto.getPassword()));
+        if(user.isPresent()){
+            return userConverter.convertToDto(user.get());
+        }
+        return null;
+    }
+
+
+    @Override
     public List<UserDto> getAll() {
 
         logger.log(Level.INFO, "UserServiceImpl - getAll() - called in.");
@@ -126,6 +168,9 @@ public class UserServiceImpl implements UserService {
         try {
             //Optional<User> user = userRepository.findById(dto.getId());
             final User entity = userConverter.convertToModelUsingLambda.apply(dto);
+            if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
+                entity.setPassword(passwordEncoder.encode(dto.getPassword()));
+            }
             userRepository.save(entity);
 
             logger.log(Level.INFO, "UserServiceImpl - saveUserUsingLambdaConverter() successfull.");
@@ -155,12 +200,19 @@ public class UserServiceImpl implements UserService {
 
                 if (!ObjectUtils.isEmpty(user) && !ObjectUtils.isEmpty(user.getId())) {
                     user = userConverter.convertToModelUsingLambda.apply(dto);
+                    if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
+                        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+                    }
                     user = userRepository.save(user);
 
                     logger.log(Level.INFO, "UserServiceImpl - saveOrUpdate() - update(): {0} success.", user.getId());
                 }
             } else {
                 user = userConverter.convertToModelUsingLambda.apply(dto);
+
+                if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
+                    user.setPassword(passwordEncoder.encode(dto.getPassword()));
+                }
                 user = userRepository.save(user);
 
                 if (!ObjectUtils.isEmpty(user) && !ObjectUtils.isEmpty(user.getId())) {
@@ -180,20 +232,26 @@ public class UserServiceImpl implements UserService {
 
         if (!ObjectUtils.isEmpty(dto)) {
 
-            if (!ObjectUtils.isEmpty(dto.getId())) {
+            if (!ObjectUtils.isEmpty(dto.getId())) { // already exist // modify
 
                 Optional<User> user = userRepository.findById(dto.getId());
                 if(user.isPresent() && !ObjectUtils.isEmpty(user.get().getId())) {
-                    User bk = userConverter.convertToModelUsingLambda.apply(dto);
-                    userRepository.save(bk);
+                    User tempUser = userConverter.convertToModelUsingLambda.apply(dto);
+                    if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
+                        tempUser.setPassword(passwordEncoder.encode(dto.getPassword()));
+                    }
+                    userRepository.save(tempUser);
 
-                    logger.log(Level.INFO, "UserServiceImpl - saveOrUpdateUsingSpringJpaWithConverterStrategy() - update(): {0} success.", bk.getId());
+                    logger.log(Level.INFO, "UserServiceImpl - saveOrUpdateUsingSpringJpaWithConverterStrategy() - update(): {0} success.", tempUser.getId());
 
                     return dto;
                 }
-            } else {
+            } else { // new user // create
                 User user = new User();
                 user = userConverter.convertToModelUsingLambda.apply(dto);
+                if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
+                    user.setPassword(passwordEncoder.encode(dto.getPassword()));
+                }
                 user = userRepository.save(user);
 
                 if (!ObjectUtils.isEmpty(user) && !ObjectUtils.isEmpty(user.getId())) {
@@ -219,6 +277,9 @@ public class UserServiceImpl implements UserService {
                 Optional<User> user = userRepository.findById(dto.getId());
                 if (user.isPresent() && !ObjectUtils.isEmpty(user.get().getId())) {
                     User response = userRepository.save(userConverter.convertToModelUsingLambda.apply(dto));
+                    if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
+                        response.setPassword(passwordEncoder.encode(dto.getPassword()));
+                    }
                     dto.setId(response.getId());
 
                     logger.log(Level.INFO, "UserServiceImpl - saveOrUpdateUsingSpringJpaWithCustomUpdateMethod() - update(): {0} success.", user.get().getId());
@@ -229,6 +290,9 @@ public class UserServiceImpl implements UserService {
         } else {
             User user = new User();
             user = userConverter.convertToModelUsingLambda.apply(dto);
+            if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
+                user.setPassword(passwordEncoder.encode(dto.getPassword()));
+            }
             user = userRepository.save(user);
 
             if (!ObjectUtils.isEmpty(user) && !ObjectUtils.isEmpty(user.getId())) {
@@ -252,7 +316,12 @@ public class UserServiceImpl implements UserService {
                 // Method 3 : with Custom Update Method and orElseThrow()
                 User user = userRepository.findById(dto.getId()).orElseThrow(() -> new ResourceNotFoundException("Not found User with id = " + dto.getId()));
                 if (!ObjectUtils.isEmpty(user.getId())) {
-                    User response = userRepository.save(userConverter.convertToModelUsingLambda.apply(dto));
+
+                    User response = userConverter.convertToModelUsingLambda.apply(dto);
+                    if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
+                        response.setPassword(passwordEncoder.encode(dto.getPassword()));
+                    }
+                    userRepository.save(response);
                     dto.setId(response.getId());
 
                     logger.log(Level.INFO, "UserServiceImpl - saveOrUpdateUsingSpringJpaWithCustomUpdateMethodAndorElseThrow() - update(): {0} success. ", user.getId());
@@ -262,6 +331,9 @@ public class UserServiceImpl implements UserService {
             } else {
                 User user = new User();
                 user = userConverter.convertToModelUsingLambda.apply(dto);
+                if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
+                    user.setPassword(passwordEncoder.encode(dto.getPassword()));
+                }
                 user = userRepository.save(user);
 
                 if (!ObjectUtils.isEmpty(user) && !ObjectUtils.isEmpty(user.getId())) {
@@ -343,4 +415,5 @@ public class UserServiceImpl implements UserService {
         }
         return userDto;
     }
+
 }

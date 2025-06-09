@@ -132,6 +132,8 @@ public class UserCredentialsConverter extends BaseConverter<UserCredentials, Use
                     .map(SimpleGrantedAuthority::new)
                     .collect(Collectors.toList()));
 
+            entity.setUser(user);
+
         }
         return entity;
     }

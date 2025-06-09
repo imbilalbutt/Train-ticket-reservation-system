@@ -28,16 +28,16 @@
     <div id="formContent">
 
         <h2 class="form-signin-heading">Welcome to Reservation Systems, please login</h2>
-        <div th:if="${param.error}" class="alert alert-danger">
-            Invalid username and password.
-        </div>
-        <div th:if="${param.logout}" class="alert alert-success">
-            You have been logged out.
-        </div>
+
 
         <!-- Login Form -->
-        <form class="form login"  method="POST"  th:action="@{/view/home/perform_login}" th:object="${loginRequest}"  >
-
+        <form class="form login"  method="POST"  th:action="@{/view/home/login}" th:object="${loginRequest}"  >
+            <div th:if="${param.error}" class="alert alert-error">
+                Invalid username and password.
+            </div>
+            <div th:if="${param.logout}" class="alert alert-success">
+                You have been logged out.
+            </div>
             <p>
                 <label th:for="username" class="sr-only">Username</label>
                 <input type="text" th:text="${loginRequest.username}"  th:id="username" th:name="username"
@@ -51,6 +51,12 @@
 
             </br>
             <button class="btn btn-lg btn-primary btn-block" type="submit">Log in</button>
+<!--            <div th:if="${param.error}" class="alert alert-danger">-->
+<!--                Invalid username and password.-->
+<!--            </div>-->
+<!--            <div th:if="${param.logout}" class="alert alert-success">-->
+<!--                You have been logged out.-->
+<!--            </div>-->
         </form>
 
         <!-- Remind Passowrd -->
