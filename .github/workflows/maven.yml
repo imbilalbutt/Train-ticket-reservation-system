@@ -14,6 +14,9 @@ on:
   pull_request:
     branches: [ "master" ]
 
+env:
+  BUILD_DIR: ./Reservation-System  # POM is in this subdirectory
+
 jobs:
   build:
 
