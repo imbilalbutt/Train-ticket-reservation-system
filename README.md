@@ -100,7 +100,7 @@ This project implements a train reservation system backend exposing secure, REST
 ## 🛡 Cross-Cutting & Security
 
 * **AOP Logging** — Logs execution times of service methods
-* **Security Config** — Roles, password encoder, JWT filters
+* **Security Config** — Roles, password encoder
 * **Exception Aspect** — Handles and formats exceptions consistently
 
 ---
