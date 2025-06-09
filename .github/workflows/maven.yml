@@ -16,7 +16,7 @@ on:
 
 env:
   run: pwd
-  run: ls
+       ls
   BUILD_DIR: ./Reservation-System  # POM is in this subdirectory
 
 jobs:
