@@ -32,6 +32,9 @@ public class SecurityConfig  { // v1.0 extends WebSecurityConfigurerAdapter
     @Autowired
     private UserDetailsService userDetailsService;
 
+    @Autowired
+    PasswordConfiguration passwordConfiguration;
+
 // v1.0 : works with WebSecurityConfigurerAdapter
 // Configure AuthenticationManager with UserDetailsService and password encoder
 //    @Override
@@ -40,16 +43,10 @@ public class SecurityConfig  { // v1.0 extends WebSecurityConfigurerAdapter
 //                .passwordEncoder(passwordEncoder());
 //    }
 
-    // Use BCrypt for secure password encoding
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
 
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setPasswordEncoder(passwordEncoder());
+        authProvider.setPasswordEncoder(passwordConfiguration.passwordEncoder());
         authProvider.setUserDetailsService(userDetailsService);
         return authProvider;
     }
@@ -72,15 +69,15 @@ public class SecurityConfig  { // v1.0 extends WebSecurityConfigurerAdapter
 
     }
 
-//    @Bean
-//    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-//        return config.getAuthenticationManager();
-//    }
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
 
 
-//    @Autowired
-//    public void configureGlobal(UserDetailsService userDetailsService, AuthenticationManagerBuilder auth) throws Exception {
-//        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-//    }
+    @Autowired
+    public void configureGlobal(UserDetailsService userDetailsService, AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordConfiguration.passwordEncoder());
+    }
 
 }
