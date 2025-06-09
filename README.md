@@ -2,6 +2,15 @@
 
 A fully featured train reservation REST API built with Java framework Spring boot.
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![Java](https://img.shields.io/badge/Java-17%2B-orange)
+![SpringBoot](https://img.shields.io/badge/Spring%20Boot-3.1.5-brightgreen)
+![SpringJPA](https://img.shields.io/badge/Spring%20JPA-3.1.5-blue)
+![SpringSecurity](https://img.shields.io/badge/Spring%20Security-6.1.5-red)
+![MySQL](https://img.shields.io/badge/MySQL-8.0%2B-blue)
+![Maven](https://img.shields.io/badge/Maven-3.9.3%2B-yellowgreen)
+
+
 ## 🚀 Overview
 
 This project implements a train reservation system backend exposing secure, RESTful endpoints for managing trains, reservations, users, authentication, and authorization. It demonstrates real-world enterprise techniques, including:
