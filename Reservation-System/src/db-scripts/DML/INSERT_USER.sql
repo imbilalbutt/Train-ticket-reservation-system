@@ -1,6 +1,5 @@
 
-
-INSERT INTO lhr_rsv.users(
+INSERT INTO users(
     user_id,
       created_by,
       created_date,
@@ -18,42 +17,19 @@ INSERT INTO lhr_rsv.users(
       reconfirm_password,
       roles,
       username)
-VALUES (1,
-        'SQL',
-        '2022-04-09T18:00:00.000',
-        true,
-        'SQL',
-        '2022-04-09T18:00:00.000',
-        true,
-        '+923075555104',
-        '35202-7577446-1',
-        'bilal.ahamad125@yahoo.com',
-        'Bilal Ahmad',
-        'Sabzazar Multan Road',
-        'Butt',
-        'passw0rd',
-        'passw0rd',
-        'user',
-        'imbilalbutt'),
-
-    (2,
-        'SQL',
-        '2022-04-09T18:00:00.000',
-        true,
-        'SQL',
-        '2022-04-09T18:00:00.000',
-        true,
-        '+923075555104',
-        '35202-7577446-1',
-        'bilal.ahamad126@yahoo.com',
-        'Bilal Ahmad',
-        'Sabzazar Multan Road',
-        'Butt',
-        'UIsy3HSLXXxdEirFqj2Qrw==',
-        'UIsy3HSLXXxdEirFqj2Qrw==',
-        'user',
-        'imbilalbutt2');
-
--- INSERT INTO users(
---     user_id, created_by, created_date, locked, modified_by, modified_date, active_status, cell_number, cnic_number, first_name, home_address, last_name)
--- VALUES (2, 'SQL', '2022-04-09T18:00:00.000', true, 'SQL', '2022-04-09T18:00:00.000', true, '+923075555104', '35202-7577446-1', 'Suleman Ahmad', 'Sabzazar Multan Road', 'Butt');
+Values(1,
+       'SQL',
+       '2022-04-09T18:00:00.000',
+       true, 'SQL',
+       '2022-04-09T18:00:00.000',
+       true,
+       '+13040000100',
+       '800007000001',
+       'email@yahoo.com',
+       'Bilal Ahmad',
+       'Home Address Road',
+       'Butt',
+       '$2a$12$9INYZXwgGFjMBNxAw.nFeelD4CuCiHXzECMkTPnKnK3NsLIYzdumW',
+       '$2a$12$9INYZXwgGFjMBNxAw.nFeelD4CuCiHXzECMkTPnKnK3NsLIYzdumW',
+       'user',
+       'imbilalbutt');
