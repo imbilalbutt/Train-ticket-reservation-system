@@ -17,7 +17,7 @@ INSERT INTO users(
       reconfirm_password,
       roles,
       username)
-Values(1,
+Values(2,
        'SQL',
        '2022-04-09T18:00:00.000',
        true, 'SQL',
@@ -25,11 +25,15 @@ Values(1,
        true,
        '+13040000100',
        '800007000001',
-       'email@yahoo.com',
+       'email2@yahoo.com',
        'Bilal Ahmad',
        'Home Address Road',
        'Butt',
-       '$2a$12$9INYZXwgGFjMBNxAw.nFeelD4CuCiHXzECMkTPnKnK3NsLIYzdumW',
-       '$2a$12$9INYZXwgGFjMBNxAw.nFeelD4CuCiHXzECMkTPnKnK3NsLIYzdumW',
+--        '$2a$12$9INYZXwgGFjMBNxAw.nFeelD4CuCiHXzECMkTPnKnK3NsLIYzdumW',
+--        '$2a$12$9INYZXwgGFjMBNxAw.nFeelD4CuCiHXzECMkTPnKnK3NsLIYzdumW',
+
+--     password@123
+    '$2a$12$lzVAKxOZEMyzTqLE.SIacux6UQASzJjWP/VD29Dcx6dy.bovclBgC',
+       '$2a$12$lzVAKxOZEMyzTqLE.SIacux6UQASzJjWP/VD29Dcx6dy.bovclBgC',
        'user',
-       'imbilalbutt');
+       'imbilalbutt2');

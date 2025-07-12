@@ -40,8 +40,19 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+<!--			<exclusions>-->
+<!--				<exclusion>-->
+<!--					<groupId>org.springframework.boot</groupId>-->
+<!--					<artifactId>spring-boot-starter-tomcat</artifactId>-->
+<!--				</exclusion>-->
+<!--			</exclusions>-->
 			<version>2.5.11</version>
 		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.boot</groupId>-->
+<!--			<artifactId>spring-boot-starter-jetty</artifactId>-->
+<!--		</dependency>-->
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-redis</artifactId>
@@ -60,6 +71,7 @@
 			<optional>true</optional>
 			<version>1.18.22</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.amqp</groupId>
 			<artifactId>spring-rabbit-test</artifactId>
@@ -88,28 +100,47 @@
 			<artifactId>spring-boot-starter-security</artifactId>
 			<version>2.5.11</version>
 		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty.http2</groupId>
+			<artifactId>jetty-http2-server</artifactId>
+			<version>12.0.13</version>
+		</dependency>
 
 	</dependencies>
 
 
 	<build>
+		<finalName>reservation-system</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>2.5.11</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.0</version>
 				<configuration>
-					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-							<version>1.18.22</version>
-						</exclude>
-					</excludes>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
 				</configuration>
 			</plugin>
+
+<!--			<plugin>-->
+<!--				<groupId>org.eclipse.jetty</groupId>-->
+<!--				<artifactId>jetty-maven-plugin</artifactId>-->
+<!--				<version>12.0.3</version>-->
+<!--				<configuration>-->
+<!--					<httpConnector>-->
+<!--						<port>8080</port>-->
+<!--					</httpConnector>-->
+<!--					<stopPort>8081</stopPort>-->
+<!--					<stopKey>stop</stopKey>-->
+<!--				</configuration>-->
+<!--			</plugin>-->
+
 		</plugins>
-		<finalName>reservation-system</finalName>
+
 	</build>
 
 </project>
