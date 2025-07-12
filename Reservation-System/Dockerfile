@@ -15,7 +15,8 @@ RUN mvn dependency:go-offline
 COPY src /app/src
 
 # Build the application
-RUN mvn clean package /app/src -DskipTests
+RUN mvn package -DskipTests
+#RUN mvn package /app/src -DskipTests
 #java package
 
 # Thie below tries to package

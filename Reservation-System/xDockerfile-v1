@@ -1,0 +1,57 @@
+# 1 container but 2 different environment
+
+FROM openjdk:17 AS build_project
+
+WORKDIR /app
+
+COPY src/ /app/
+
+RUN mvn install pom.xml
+
+# Copy the model training script into the container
+# copy src folder inside Container/app
+COPY src/ .
+
+RUN mvn package /app/src
+#java package
+
+
+# STAGE 2
+FROM openjdk:17 AS run_application
+
+WORKDIR /app
+
+COPY --from=build_project /app/src/target/ /app/
+
+EXPOSE 4000
+
+# Define environmental variables
+ENV NAME World
+
+COPY pom.xml /app/
+RUN mvn install pom.xml
+
+# Copy the templates directory
+COPY src/main/resources/* /app/src/main/resources/
+
+ADD target/reservation-system.jar reservation-system.jar
+
+# Commannd to run the jar
+ENTRYPOINT  ["java", "-jar", "/reservation-system.jar"]
+
+
+
+# # Step 1: Use an official OpenJDK base image from Docker Hub
+ #FROM openjdk:17-jdk-alpine
+ #
+ ## Step 2: Set the working directory inside the container
+ #WORKDIR /app
+ #
+ ## Step 3: Copy the Spring Boot JAR file into the container
+ #COPY target/my-spring-boot-app.jar /app/my-spring-boot-app.jar
+ #
+ ## Step 4: Expose the port your application runs on
+ #EXPOSE 8080
+ #
+ ## Step 5: Define the command to run your Spring Boot application
+ #CMD ["java", "-jar", "/app/my-spring-boot-app.jar"]
