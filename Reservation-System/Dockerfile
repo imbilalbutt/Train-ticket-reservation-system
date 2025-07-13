@@ -20,7 +20,8 @@ FROM maven:3.8.4-openjdk-17 AS build_project
 
 ENV POSTGRES_DB=lhr_rsv \
     POSTGRES_USER=imbilalbutt \
-    POSTGRES_PASSWORD=password
+#    POSTGRES_PASSWORD=password
+    POSTGRES_PASSWORD=password@123
 
 
 ## RUN mkdir -p /home/app
