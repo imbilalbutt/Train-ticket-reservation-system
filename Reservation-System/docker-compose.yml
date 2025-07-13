@@ -1,31 +1,47 @@
 version: '3.8'
 
+# Structured way of running commands
+
+# docker run --name myPostgres -p 5432:5432 -e POSTGRES_USER=imbilalbutt -e POSTGRES_PASSWORD=password  postgres:9.6
+
+# docker run -p --name reservation-system-v1 8081:4000 reservation-system:v1
+
+# docker-compose -f docker-compose.yaml up
+
+# docker-compose -f docker-compose.yaml down
+
 services:
   postgres:
-    image: postgres:15
-    container_name: postgres
+    image: postgres:9.6
+    container_name: myPostgres
     restart: always
-    environment:
-      POSTGRES_DB: lhr_rsv
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: passw0rd
     ports:
+#      - host port (my laptop) : container port
       - "5432:5432"
+
+#    Environment variables
+    environment:
+          POSTGRES_DB: lhr_rsv
+          POSTGRES_USER: imbilalbutt
+          POSTGRES_PASSWORD: password
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+          - app-network
 
-  app:
+  my-app:
     build: .
     container_name: reservation-system
     restart: always
     ports:
-      - "8081:8081"
+      - "8081:4000"
     depends_on:
       - postgres
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/lhr_rsv
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: passw0rd
+      SPRING_DATASOURCE_USERNAME: imbilalbutt
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQL81Dialect
     networks:
       - app-network
 
