@@ -22,6 +22,21 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_DB: ${{ env.POSTGRES_DB }}
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
     - uses: actions/checkout@v4
 
@@ -60,15 +75,23 @@ jobs:
         echo "Project structure:"
         ls -la $BUILD_DIR
 
-    - name: Verify Maven version
-      run: mvn --version
+    - name: Wait for PostgreSQL to be ready
+      run: sleep 10  # Give PostgreSQL time to start
       
     - name: Build with Maven
 #      run: mvn -B package -DskipTests
 #      working-directory: ./Reservation-System
       run: mvn -B package -DskipTests
       working-directory: ${{ env.BUILD_DIR }}
+      env:
+        SPRING_DATASOURCE_URL: ${{ env.SPRING_DATASOURCE_URL }}
+        SPRING_DATASOURCE_USERNAME: ${{ env.SPRING_DATASOURCE_USERNAME }}
+        SPRING_DATASOURCE_PASSWORD: ${{ env.SPRING_DATASOURCE_PASSWORD }}
 
     - name: Run tests
       run: mvn -B test
       working-directory: ./Reservation-System
+      env:
+        SPRING_DATASOURCE_URL: ${{ env.SPRING_DATASOURCE_URL }}
+        SPRING_DATASOURCE_USERNAME: ${{ env.SPRING_DATASOURCE_USERNAME }}
+        SPRING_DATASOURCE_PASSWORD: ${{ env.SPRING_DATASOURCE_PASSWORD }}
