@@ -29,8 +29,8 @@ jobs:
       run: pwd
 #      /home/runner/work/Train-ticket-reservation-system/Train-ticket-reservation-system
 
-#    - name: Change Directory
-#      run: cd ./Train-ticket-reservation-system
+    - name: Change Directory
+      run: cd ./Reservation-System
 
     - name: List Directory
       run: ls
@@ -50,7 +50,7 @@ jobs:
       
     - name: Build with Maven
       run: mvn -B package -DskipTests
-      working-directory: ./Train-ticket-reservation-system
+      working-directory: ./Reservation-System
 
     - name: Run tests
       run: mvn -B test
