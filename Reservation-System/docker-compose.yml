@@ -6,9 +6,12 @@ version: '3.8'
 
 # docker run -p --name reservation-system-v1 8081:4000 reservation-system:v1
 
-# docker-compose -f docker-compose.yaml up
+# docker-compose -f docker-compose.yml up
+#  docker-compose -f docker-compose.yml up
 
-# docker-compose -f docker-compose.yaml down
+# docker-compose -f docker-compose.yml down
+
+
 
 services:
   postgres:
