@@ -35,6 +35,8 @@ This project implements a train reservation system backend exposing secure, REST
 
 ## 📌 Features
 
+### Core Application
+
 * **User authentication & authorization** (sign-up, login, (TODO: session-based tokens))
 * CRUD operations for:
 
@@ -42,10 +44,24 @@ This project implements a train reservation system backend exposing secure, REST
   * Train schedules
   * Reservations
   * Users
-* Reservation validation (seat availability, trip conflicts)
+    
+
 * Global exception handling with meaningful HTTP responses
 * Detailed DTO mapping, separating API models from entity models
 * Logging and performance aspects using AOP
+
+* TODO: Reservation validation (seat availability, trip conflicts)
+* TODO: Payment checkouts
+
+### Infrastructure
+
+* Containerized deployment with Docker
+
+* CI/CD automation with Jenkins
+
+* Jetty server deployment (optimized for Spring Boot)
+
+* PostgreSQL database integration
 
 ---
 
@@ -59,9 +75,8 @@ This project implements a train reservation system backend exposing secure, REST
 * AOP (`@Aspect`, `@Around`, `@Before`, etc.)
 * Functional mapping: `Function<Train, TrainDto>` etc.
 * Maven build system
-* CI/CD
-* Jenkins
-* Docker
+* CI/CD Jenkins
+* Container Docker
 * JUnit & Mockito tests
 * Jetty server and Apache Tomcat
 
@@ -191,27 +206,6 @@ Server Support:
 Primary: Jetty 12.0+ (lightweight and fast)
 
 Extensible: Can be configured for WildFly, GlassFish, or Tomcat
-
----
-
-## 📌 Features
-### Core Application
-
-* User authentication & authorization
-
-* CRUD operations for Trains, Schedules, Reservations
-
-* Global exception handling
-
-### Infrastructure
-
-* Containerized deployment with Docker
-
-* CI/CD automation with Jenkins
-
-* Jetty server deployment (optimized for Spring Boot)
-
-* PostgreSQL database integration
 
 --- 
 
