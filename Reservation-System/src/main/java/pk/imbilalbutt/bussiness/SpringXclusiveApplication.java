@@ -10,6 +10,7 @@ public class SpringXclusiveApplication extends AbstractSecurityWebApplicationIni
     public static void main(String[] args) {
         // Application logic
         SpringApplication.run(SpringXclusiveApplication.class, args);
+
     }
 }
 

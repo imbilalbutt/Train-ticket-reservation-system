@@ -17,7 +17,7 @@
 FROM maven:3.8.4-openjdk-17 AS build_project
 #FROM openjdk:17 AS build_project
 
-
+#Deine env variables inside Docker container
 ENV POSTGRES_DB=lhr_rsv \
     POSTGRES_USER=imbilalbutt \
 #    POSTGRES_PASSWORD=password
@@ -26,8 +26,10 @@ ENV POSTGRES_DB=lhr_rsv \
 
 ## RUN mkdir -p /home/app
 
+# Create directory insider Docker
 WORKDIR /app
 
+# Copy pom file from my laptop to container /home/runner/app/.
 COPY pom.xml .
 
 # Install dependencies

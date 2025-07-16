@@ -15,3 +15,27 @@ public class PasswordConfiguration {
     }
 
 }
+
+
+// @Configuration
+//public class PasswordConfiguration {
+//
+//    BCryptPasswordEncoder passwordEncoder;
+//
+//    // Use BCrypt for secure password encoding
+//    @Bean
+//    public PasswordEncoder passwordEncoder() {
+//        this.passwordEncoder = new BCryptPasswordEncoder();
+//        return this.passwordEncoder;
+//    }
+//
+//
+//    public String bcryptEncryptor(String plainText) {
+//        return this.passwordEncoder.encode(plainText);
+//    }
+//
+//    public Boolean doPasswordsMatch(String rawPassword,String encodedPassword) {
+//        return this.passwordEncoder.matches(rawPassword, encodedPassword);
+//    }
+//
+//}
