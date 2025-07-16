@@ -15,6 +15,7 @@ import pk.imbilalbutt.bussiness.service.UserService;
 
 import java.util.List;
 
+// http://localhost:9090/Reservation-System/rest/user/list
 @RestController
 @RequestMapping(value = "/rest/user")
 public class UserRestController {
