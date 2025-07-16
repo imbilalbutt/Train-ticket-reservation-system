@@ -1,69 +1,46 @@
-
-
-
-
-
 pipeline {
     agent any
 
     environment {
         PROJECT_DIR = 'Reservation-System'
-
-        // Version control
+        APP_NAME = 'reservation-system'
         GIT_REPO = 'https://github.com/imbilalbutt/Train-ticket-reservation-system.git'
-        BRANCH = 'Jetty-Server' // 'master'
-
-        // Build tools
+        BRANCH = 'Jetty-Server'
         M2_HOME = '/Users/imbilalbutt/Downloads/apache-maven-3.9.11/bin'
         PATH = "${M2_HOME}:${PATH}"
-
-        // Database
-        POSTGRES_JDBC_URL = 'jdbc:postgresql://localhost:5433/lhr_rsv' // ${SPRING_DATASOURCE_URL}
-        POSTGRES_USER = 'imbilalbutt' // ${SPRING_DATASOURCE_USERNAME}
-        POSTGRES_PASSWORD = 'password@123' // ${SPRING_DATASOURCE_PASSWORD}
-
-        // Server configurations
-        JETTY_HOME = '/Users/imbilalbutt/Downloads/jetty-home-12.0.23/bin'
-        WILDFLY_HOME = '/Users/imbilalbutt/Downloads/wildfly-30.0.0.Final/bin'
-        DEPLOYMENT_TARGET = 'jetty' // 'jetty' or 'wildfly'
+        POSTGRES_JDBC_URL = 'jdbc:postgresql://localhost:5433/lhr_rsv'
+        POSTGRES_USER = 'imbilalbutt'
+        POSTGRES_PASSWORD = 'password@123'
+        JETTY_HOME = '/Users/imbilalbutt/Downloads/jetty-home-12.0.23'
+        WILDFLY_HOME = '/Users/imbilalbutt/Downloads/wildfly-30.0.0.Final'
+        DEPLOYMENT_TARGET = 'jetty'
         SERVER_PORT = '9090'
-
     }
 
     stages {
         stage('Checkout') {
             steps {
                 git branch: BRANCH, url: GIT_REPO
-                // git 'https://github.com/dstar55/docker-hello-world-spring-boot.git'
             }
         }
 
         stage('Verify Project Structure') {
             steps {
                 script {
-                    // Verify POM exists in the expected location
-                    def pomExists = fileExists "${env.PROJECT_DIR}/pom.xml"
-                    if (!pomExists) {
-                        error "POM file not found in ${env.PROJECT_DIR}. Please check your project structure."
+                    if (!fileExists("${PROJECT_DIR}/pom.xml")) {
+                        error "POM file not found in ${PROJECT_DIR}"
                     }
-
-                    // Print directory structure for debugging
-                    sh "ls -la ${env.PROJECT_DIR}"
+                    sh "ls -la ${PROJECT_DIR}"
                 }
             }
         }
 
-
-
-
         stage('Run Tests') {
-
             steps {
-                dir(PROJECT_DIR) {  // Change to project directory
+                dir(PROJECT_DIR) {
                     sh 'mvn test'
                 }
             }
-
             post {
                 failure {
                     error 'Tests failed! Pipeline aborted.'
@@ -73,18 +50,17 @@ pipeline {
 
         stage('Build') {
             steps {
-                dir(PROJECT_DIR) {  // Change to project directory
-//                 sh 'mvn clean package -DskipTests'
-                   sh 'mvn package -DskipTests'
+                dir(PROJECT_DIR) {
+                    sh 'mvn package -DskipTests'
                 }
             }
             post {
                 success {
                     dir(PROJECT_DIR) {
-                        // junit "${PROJECT_DIR}/target/surefire-reports/TEST-*.xml"
-                        // archiveArtifacts "${PROJECT_DIR}/target/*.jar"
-                        junit '**/target/surefire-reports/TEST-*.xml'
-                        archiveArtifacts '**/target/*.jar'
+                        // junit 'target/surefire-reports/TEST-*.xml'
+                        // archiveArtifacts "target/${APP_NAME}*.jar, target/${APP_NAME}*.war"
+                         junit '**/target/surefire-reports/TEST-*.xml'
+                         archiveArtifacts '**/target/*.jar'
                     }
                 }
                 failure {
@@ -96,22 +72,26 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    def artifact = findFiles(glob: 'target/*.war')[0]?.path ?:
-                                 findFiles(glob: 'target/*.jar')[0]?.path
+                    dir(PROJECT_DIR) {
+                        // Find the most recently modified artifact
+                        def artifact = sh(script: """
+                            ls -t target/${APP_NAME}*.jar target/${APP_NAME}*.war 2>/dev/null | head -1
+                        """, returnStdout: true).trim()
 
-                    if (!artifact) {
-                        error 'No deployable artifact found in target/ directory'
-                    }
+                        if (!artifact) {
+                            error "No deployable artifact found in target directory"
+                        }
 
-                    switch(DEPLOYMENT_TARGET) {
-                        case 'jetty':
-                            deployToJetty(artifact)
-                            break
-                        case 'wildfly':
-                            deployToWildFly(artifact)
-                            break
-                        default:
-                            error "Unsupported deployment target: ${DEPLOYMENT_TARGET}"
+                        switch(DEPLOYMENT_TARGET) {
+                            case 'jetty':
+                                deployToJetty(artifact)
+                                break
+                            case 'wildfly':
+                                deployToWildFly(artifact)
+                                break
+                            default:
+                                error "Unsupported deployment target: ${DEPLOYMENT_TARGET}"
+                        }
                     }
                 }
             }
@@ -120,56 +100,37 @@ pipeline {
 
     post {
         always {
-            echo 'Pipeline completed - cleaning up workspace'
             cleanWs()
         }
         success {
-            slackSend(color: 'good', message: "Build Successful: ${JOB_NAME} #${BUILD_NUMBER}")
+            echo "Pipeline succeeded"
         }
         failure {
-            slackSend(color: 'danger', message: "Build Failed: ${JOB_NAME} #${BUILD_NUMBER}")
+            echo "Pipeline failed"
         }
     }
 }
 
-// Deployment methods
 def deployToJetty(String artifactPath) {
     echo "Deploying ${artifactPath} to Jetty"
-
-    // Stop existing Jetty if running
     sh """
         pkill -f 'java.*jetty' || true
+        sleep 2
         rm -f ${JETTY_HOME}/webapps/ROOT.war
-    """
-
-    // Deploy artifact
-    sh """
         cp ${artifactPath} ${JETTY_HOME}/webapps/ROOT.war
         cd ${JETTY_HOME}
-        nohup jetty.sh start -Djetty.http.port=${SERVER_PORT} > logs/jetty.log 2>&1 &
+        nohup bin/jetty.sh start -Djetty.http.port=${SERVER_PORT} > logs/jetty.log 2>&1 &
     """
-
     echo "Application deployed to Jetty on port ${SERVER_PORT}"
 }
 
 def deployToWildFly(String artifactPath) {
     echo "Deploying ${artifactPath} to WildFly"
-
-    // Stop existing WildFly if running
     sh """
-        ${WILDFLY_HOME}/jboss-cli.sh --connect --command=:shutdown || true
+        ${WILDFLY_HOME}/bin/jboss-cli.sh --connect --command=:shutdown || true
+        sleep 5
+        ${WILDFLY_HOME}/bin/jboss-cli.sh --connect --command="deploy ${artifactPath}"
+        nohup ${WILDFLY_HOME}/bin/standalone.sh > ${WILDFLY_HOME}/standalone/log/server.log 2>&1 &
     """
-
-    // Deploy artifact
-    sh """
-        ${WILDFLY_HOME}/jboss-cli.sh --connect \
-        --command="deploy ${artifactPath} --server-groups=main-server-group"
-    """
-
-    // Start WildFly
-    sh """
-        nohup ${WILDFLY_HOME}/standalone.sh > ${WILDFLY_HOME}/standalone/log/server.log 2>&1 &
-    """
-
     echo "Application deployed to WildFly"
 }
