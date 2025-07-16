@@ -1,0 +1,198 @@
+//  java -jar $JETTY_HOME/start.jar --add-modules=http
+//  java -jar $JETTY_HOME/start.jar -Djetty.http.port=9090
+//  java -jar $WILDFLY_HOME/standalone.sh --add-modules=http
+//  touch ~/.bash_profile; open ~/.bash_profile
+//  source ~/.bash_profile
+
+pipeline {
+    agent any
+
+//     tools {
+//         // Install the Maven version configured as "M3" and add it to the path.
+//         maven "M2_HOME" // # maven-3.8.5'
+//     }
+
+    stages {
+        stage{
+            environment {
+                // Configure these variables in Jenkins credentials or directly here
+                GIT_REPO = 'https://github.com/imbilalbutt/Train-ticket-reservation-system.git'
+                BRANCH = 'master' // or your development branch
+                M2_HOME='/Users/imbilalbutt/Downloads/apache-maven-3.9.11/bin'
+
+                // JBOSS_DEPLOY_DIR = "${JBOSS_HOME}/standalone/deployments"
+                POSTGRES_JDBC_URL = 'jdbc:postgresql://localhost:5433/lhr_rsv'
+                POSTGRES_USER = 'imbilalbutt' // Use credentials instead for production
+                POSTGRES_PASSWORD = 'password@123' // Use credentials instead for production
+
+                JETTY_HOME = '/Users/imbilalbutt/Downloads/jetty-home-12.0.23/bin' // Set your JBoss home directory
+                DEPLOYMENT_TARGET = 'jetty'
+                SERVER_PORT = '9090'
+
+                WILDFLY_HOME = '/Users/imbilalbutt/Downloads/wildfly-30.0.0.Final/bin'
+            }
+        }
+
+        stage('Checkout') {
+             steps {
+                 git branch: BRANCH, url: GIT_REPO
+             }
+        }
+
+
+
+         stage('Run Tests') {
+             steps {
+                 sh 'mvn test'
+                 echo 'Tests completed successfully'
+             }
+
+             post {
+                 failure {
+                     echo 'Tests failed! Pipeline aborted.'
+                     // Add notification steps here (send email)
+                 }
+             }
+         }
+
+          stage('Build with Maven') {
+             steps {
+                 sh 'mvn clean package -DskipTests' // Tests already run in previous stage
+                 echo 'Application built successfully'
+             }
+
+             post {
+//              If Maven was able to run the tests, even if some of the test
+//              failed, record the test results and archive the jar file.
+                 success {
+                     junit '**/target/surefire-reports/TEST-*.xml'
+                     archiveArtifacts 'target/*.jar'
+                 }
+
+                 failure {
+                     echo 'Build failed! Pipeline aborted.'
+                 }
+             }
+         }
+
+          stage('Deploy to Jetty') {
+            steps {
+
+                def jarFile = findFiles(glob: 'target/*.jar')[0].path
+
+                switch(DEPLOYMENT_TARGET) {
+                    case 'jetty':
+                        deployToJetty(jarFile)
+                        break
+                    case 'wildfly':
+                        deployToWildFly(jarFile)
+                        break
+
+                    default:
+                        error "Unsupported deployment target: ${DEPLOYMENT_TARGET}"
+                }
+            }
+            post {
+                    always {
+                        echo 'Pipeline completed - cleaning up workspace'
+                        cleanWs()
+                    }
+                    success {
+                        slackSend(color: 'good', message: "Build Successful: ${JOB_NAME} #${BUILD_NUMBER}")
+                    }
+                    failure {
+                        slackSend(color: 'danger', message: "Build Failed: ${JOB_NAME} #${BUILD_NUMBER}")
+                    }
+            }
+
+          }
+
+//            stage('Build Docker Image') {
+//             // build docker image
+//             sh "whoami"
+//             //sh "ls -all /var/run/docker.sock"
+//             sh "mv ./target/*.jar ./data"
+//
+//             dockerImage = docker.build("my-java-app")
+//            }
+//
+//            stage('Deploy Docker Image'){
+//
+//                 // deploy docker image to nexus
+//                 echo "Docker Image Tag Name: ${dockerImageTag}"
+//
+//                 sh "docker login -u imbilalbutt -p @Ssd25ggh ${dockerRepoUrl}"
+//                 sh "docker tag ${dockerImageName} ${dockerImageTag}"
+//                 sh "docker push ${dockerImageTag}"
+//            }
+
+//         stage('Build') {
+//             steps {
+//                 echo 'Building initiated'
+//                 // Get some code from a GitHub repository
+//                 git 'https://github.com/imbilalbutt/Train-ticket-reservation-system.git'
+//
+//                 // Run Maven on a Unix agent.
+//                 sh "mvn -Dmaven.test.failure.ignore=true clean package"
+//
+//                 // To run Maven on a Windows agent, use
+//                 // bat "mvn -Dmaven.test.failure.ignore=true clean package"
+//             }
+//
+//             post {
+//                 // If Maven was able to run the tests, even if some of the test
+//                 // failed, record the test results and archive the jar file.
+//                 success {
+//                     junit '**/target/surefire-reports/TEST-*.xml'
+//                     archiveArtifacts 'target/*.jar'
+//                 }
+//             }
+//         }
+//          stage('Deploy') {
+//          }
+     }
+}
+
+// Deployment methods
+def deployToJetty(String jarPath) {
+    echo "Deploying ${jarPath} to Jetty"
+
+    // Stop existing Jetty if running
+    sh """
+        if [ -f "${JETTY_HOME}/pidfile.txt" ]; then
+         # Stop existing Jetty instance if running
+            kill \$(cat "${JETTY_HOME}/pidfile.txt") || true
+        fi
+    """
+
+    // Deploy the WAR file
+    sh """
+    # Deploy artifact (rename to ROOT.war for root context)
+        cp ${jarPath} ${JETTY_HOME}/webapps/ROOT.war
+        cd ${JETTY_HOME}
+        nohup java -jar ${JETTY_HOME}/jetty.sh start -Djetty.http.port=${SERVER_PORT} > ${JETTY_HOME}/logs/jetty.log 2>&1 & echo \$! > pidfile.txt
+    """
+
+    echo "Application deployed to Jetty on port ${SERVER_PORT}"
+}
+
+def deployToWildFly(String jarPath) {
+    echo "Deploying ${jarPath} to WildFly"
+    // Add WildFly deployment logic here
+    // sh "${WILDFLY_HOME}/jboss-cli.sh --connect --command='deploy ${jarPath}'"
+
+    when {
+            expression { DEPLOYMENT_TARGET == 'wildfly' }
+    }
+    steps {
+        script {
+            def warFile = findFiles(glob: 'target/*.war')[0]?.path ?:
+                         findFiles(glob: 'target/*.jar')[0]?.path
+
+            sh """
+                ${WILDFLY_HOME}/standalone.sh --connect \
+                --command="deploy ${jarPath} --server-groups=main-server-group"
+            """
+        }
+    }
+}
