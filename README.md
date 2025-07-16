@@ -7,8 +7,11 @@ A fully featured train reservation REST API built with Java framework Spring boo
 ![SpringBoot](https://img.shields.io/badge/Spring%20Boot-3.1.5-brightgreen)
 ![SpringJPA](https://img.shields.io/badge/Spring%20JPA-3.1.5-blue)
 ![SpringSecurity](https://img.shields.io/badge/Spring%20Security-6.1.5-red)
+![Docker](https://img.shields.io/badge/Docker-20.10%2B-blue)
+![Jenkins](https://img.shields.io/badge/Jenkins-2.414%2B-lightgrey)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15%2B-336791)
 ![Maven](https://img.shields.io/badge/Maven-3.9.3%2B-yellowgreen)
+![Jetty](https://img.shields.io/badge/Jetty-12.0%2B-9cf)
 ![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-4.0-lightgrey)
 
 ## 🚀 Overview
@@ -22,6 +25,11 @@ This project implements a train reservation system backend exposing secure, REST
 * **Aspect-Oriented Programming (AOP)** for cross-cutting concerns like logging and audit
 * **Functional Programming** with `Function<Model, DTO>` converters for clean Model ↔️ DTO transformation
 * Solid architecture: Controllers → Services → Repositories
+*  Multi-stage Docker builds for optimized containerization
+* Jenkins CI/CD pipeline for automated testing and deployment
+* Jetty server deployment (extensible to WildFly, GlassFish, etc.)
+* Spring Security with role-based access control
+* Comprehensive API documentation
 
 ---
 
@@ -51,8 +59,11 @@ This project implements a train reservation system backend exposing secure, REST
 * AOP (`@Aspect`, `@Around`, `@Before`, etc.)
 * Functional mapping: `Function<Train, TrainDto>` etc.
 * Maven build system
+* CI/CD
+* Jenkins
 * Docker
-* TODO: JUnit & Mockito tests
+* JUnit & Mockito tests
+* Jetty server and Apache Tomcat
 
 ---
 
@@ -61,8 +72,10 @@ This project implements a train reservation system backend exposing secure, REST
 ### Prerequisites
 
 * JDK 17+ installed
-* Maven
+* Spring boot 3
+* Maven 3
 * (Optional) Docker for a consistent environment
+* PostGres SQL
 
 ### Environment Setup
 
@@ -83,11 +96,11 @@ This project implements a train reservation system backend exposing secure, REST
 3. Build and run:
 
    ```bash
-   ./mvnw clean install
+   ./mvnw clean package
    ./mvnw spring-boot:run
    ```
 
-   The API will be available at `http://localhost:8080/api`.
+   The API will be available at `http://localhost:8080/reservation-system/`.
 
 ---
 
@@ -95,13 +108,140 @@ This project implements a train reservation system backend exposing secure, REST
 
 | Resource        | Endpoint                         | Methods                        | Roles           |
 | --------------- | -------------------------------- | ------------------------------ | --------------- |
-| `Auth`          | `/api/auth/signup`               | `POST` (register new users)    | —               |
-|                 | `/api/auth/signin`               | `POST` (login & token)         | —               |
-| `Train`         | `/api/trains`                    | `GET`, `POST`, `PUT`, `DELETE` | `ADMIN`         |
-| `Schedule`      | `/api/trains/{id}/schedules`     | `GET`, `POST`, `PUT`, `DELETE` | `ADMIN`         |
-| `Reservation`   | `/api/reservations`              | `GET`, `POST`, `PUT`, `DELETE` | `USER`, `ADMIN` |
-| `User`          | `/api/users`                     | `GET`, `PUT`, `DELETE`         | `ADMIN`         |
+| `Auth`          | `/reservation-system/auth/signup`               | `POST` (register new users)    | —               |
+|                 | `/reservation-system/auth/signin`               | `POST` (login & token)         | —               |
+| `Train`         | `/reservation-system/trains`                    | `GET`, `POST`, `PUT`, `DELETE` | `ADMIN`         |
+| `Schedule`      | `/reservation-system/trains/{id}/schedules`     | `GET`, `POST`, `PUT`, `DELETE` | `ADMIN`         |
+| `Reservation`   | `/reservation-system/reservations`              | `GET`, `POST`, `PUT`, `DELETE` | `USER`, `ADMIN` |
+| `User`          | `/reservation-system/users`                     | `GET`, `PUT`, `DELETE`         | `ADMIN`         |
 | DTO conversions | Internal; invoked in controllers | —                              | —               |
+
+
+---
+
+## 🐳 Docker Deployment
+
+The project includes a multi-stage `Dockerfile` for optimized container builds:
+
+### Dockerfile Structure
+
+```dockerfile
+# STAGE 1: Build stage with Maven
+FROM maven:3.8.4-openjdk-17 AS build_project
+ENV POSTGRES_DB=lhr_rsv \
+    POSTGRES_USER=imbilalbutt \
+    POSTGRES_PASSWORD=password@123
+WORKDIR /app
+COPY pom.xml .
+RUN mvn dependency:go-offline
+COPY src ./src
+RUN mvn package -DskipTests
+
+# STAGE 2: Runtime stage
+FROM openjdk:17-jdk-slim AS run_application
+WORKDIR /app
+COPY --from=build_project /app/target/reservation-system.jar .
+COPY --from=build_project /app/src/main/resources/ ./resources/
+EXPOSE 4000
+ENTRYPOINT ["java", "-jar", "/app/reservation-system.jar"]
+```
+
+Key Features:
+* Multi-stage build reduces final image size
+
+* Dependency caching for faster rebuilds
+
+* Environment variables for database configuration
+
+* Port 4000 exposed for the application
+
+Build & Run Commands:
+```bash
+# Build the image
+docker build -t reservation-system:v1 .
+
+# Run the container
+docker run -p 8080:4000 --name reservation-system reservation-system:v1
+```
+
+## 🛠️ Jenkins CI/CD Pipeline
+The project includes a Jenkinsfile for automated builds and deployments:
+
+Pipeline Features:
+* Multi-stage workflow: Checkout → Build → Test → Deploy
+
+* Environment variables for consistent configuration
+
+* Jetty server deployment (can be extended to WildFly/GlassFish)
+
+* PostgreSQL integration with credentials management
+
+* Artifact archiving for build outputs
+
+Deployment Options:
+```groovy
+environment {
+    DEPLOYMENT_TARGET = 'jetty'  // Can be 'jetty', 'wildfly', or other servers
+    JETTY_HOME = '/path/to/jetty'
+    SERVER_PORT = '9090'
+}
+```
+
+Server Support:
+Primary: Jetty 12.0+ (lightweight and fast)
+
+Extensible: Can be configured for WildFly, GlassFish, or Tomcat
+
+---
+
+## 📌 Features
+### Core Application
+
+* User authentication & authorization
+
+* CRUD operations for Trains, Schedules, Reservations
+
+* Global exception handling
+
+### Infrastructure
+
+* Containerized deployment with Docker
+
+* CI/CD automation with Jenkins
+
+* Jetty server deployment (optimized for Spring Boot)
+
+* PostgreSQL database integration
+
+--- 
+
+## 🚢 Deployment Options
+### 1. Jetty Server (Default)
+```bash
+# Using included Dockerfile
+docker build -t reservation-system .
+docker run -p 8080:4000 reservation-system
+```
+
+### 2. Extending to Other Servers
+   
+Modify the DEPLOYMENT_TARGET in Jenkinsfile:
+
+```groovy
+environment {
+    DEPLOYMENT_TARGET = 'wildfly'  // Change to desired server
+    WILDFLY_HOME = '/path/to/wildfly'
+}
+``` 
+Supported server options:
+
+* Jetty (default)
+
+* WildFly
+
+* GlassFish
+
+* Tomcat (requires WAR packaging)
 
 
 ---
@@ -139,6 +279,21 @@ To run tests:
 ```
 
 ---
+
+Made with ❤️ using Spring Boot and Jetty
+
+```text
+
+Key additions:
+1. Added Dockerfile section with detailed explanation
+2. Added Jenkins CI/CD pipeline documentation
+3. Highlighted Jetty as primary server with extensibility to others
+4. Added relevant badges (Docker, Jenkins, Jetty)
+5. Included deployment options section
+6. Maintained all existing content while integrating new information
+```
+
+--- 
 
 ## 🛠️ Contributing
 
