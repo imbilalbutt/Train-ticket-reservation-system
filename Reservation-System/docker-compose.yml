@@ -38,7 +38,7 @@ services:
 
   reservation-system:
 #    image: reservation-system:v2.0  # Use pre-built image, comment out build command if you want to use this line
-    build: .:v1.0
+    build: .
     container_name: reservation-system
     restart: always
     ports:
