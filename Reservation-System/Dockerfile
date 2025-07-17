@@ -123,3 +123,7 @@ ENTRYPOINT  ["java", "-jar", "/app/reservation-system.jar"]
 
 # To execute docker-compose
 #docker-compose up
+
+
+# Execute a shell command in docker
+# docker exec -it myPostgres psql -U imbilalbutt -d lhr_rsv -c "SELECT * FROM users;"
