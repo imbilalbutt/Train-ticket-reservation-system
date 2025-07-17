@@ -11,7 +11,7 @@
 //    public void customize(JettyServletWebServerFactory factory) {
 //
 //        factory.setPort(4000); // Port inside  DOCKER container, should match with Dockerfile EXPOSE and docker-compose SERVER PORT
-//        factory.setContextPath("/Reservation-System");
+//        factory.setContextPath("/reservation-system");
 //        // Add any additional Jetty configurations if needed
 //    }
 //}
