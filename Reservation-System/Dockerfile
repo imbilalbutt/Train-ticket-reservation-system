@@ -89,8 +89,6 @@ ENTRYPOINT  ["java", "-jar", "/app/reservation-system.jar"]
 #COPY target/*.jar /usr/local/tomcat/webapps/
 
 
-
-
 ### Concept
 
 
@@ -114,4 +112,3 @@ ENTRYPOINT  ["java", "-jar", "/app/reservation-system.jar"]
 
 # To execute docker-compose
 #docker-compose up
-
