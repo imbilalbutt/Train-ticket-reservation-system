@@ -1,0 +1,211 @@
+pipeline {
+    agent any
+
+    environment {
+        PROJECT_DIR = 'Reservation-System'
+        APP_NAME = 'reservation-system'
+        GIT_REPO = 'https://github.com/imbilalbutt/Train-ticket-reservation-system.git'
+        BRANCH = 'Jetty-Server'
+        M2_HOME = '/Users/imbilalbutt/Downloads/apache-maven-3.9.11/bin'
+        PATH = "${M2_HOME}:${PATH}"
+        POSTGRES_JDBC_URL = 'jdbc:postgresql://localhost:5433/lhr_rsv'
+        POSTGRES_USER = 'imbilalbutt'
+        POSTGRES_PASSWORD = 'password@123'
+        JETTY_HOME = '/Users/imbilalbutt/Downloads/jetty-home-12.0.23'
+        WILDFLY_HOME = '/Users/imbilalbutt/Downloads/wildfly-30.0.0.Final'
+        DEPLOYMENT_TARGET = 'docker' // Can be 'docker', 'jetty', or 'wildfly'
+        SERVER_PORT = '9090'
+        DOCKER_IMAGE_NAME = 'reservation-system'
+        DOCKER_TAG = "${env.BUILD_NUMBER}"
+        DOCKER_PORT = '8081'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: BRANCH, url: GIT_REPO
+            }
+        }
+
+        stage('Verify Project Structure') {
+            steps {
+                script {
+                    if (!fileExists("${PROJECT_DIR}/pom.xml")) {
+                        error "POM file not found in ${PROJECT_DIR}"
+                    }
+                    if (!fileExists("${PROJECT_DIR}/Dockerfile")) {
+                        error "Dockerfile not found in ${PROJECT_DIR}"
+                    }
+                    if (!fileExists("${PROJECT_DIR}/docker-compose.yml")) {
+                        error "docker-compose.yml not found in ${PROJECT_DIR}"
+                    }
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                dir(PROJECT_DIR) {
+                    sh 'mvn test'
+                }
+            }
+            post {
+                failure {
+                    error 'Tests failed! Pipeline aborted.'
+                }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                dir(PROJECT_DIR) {
+                    sh 'mvn clean package -DskipTests'
+                    // Build Docker image as well
+                    sh "docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_TAG} ."
+                }
+            }
+            post {
+                success {
+                    dir(PROJECT_DIR) {
+                        // junit '**/target/surefire-reports/TEST-*.xml'
+                        archiveArtifacts '**/target/*.jar'
+                    }
+                }
+                failure {
+                    error 'Build failed! Pipeline aborted.'
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                script {
+                    dir(PROJECT_DIR) {
+                        switch(DEPLOYMENT_TARGET) {
+                            case 'docker':
+                                deployWithDocker()
+                                break
+                            case 'jetty':
+                                def artifact = findLatestArtifact()
+                                deployToJetty(artifact)
+                                break
+                            case 'wildfly':
+                                def artifact = findLatestArtifact()
+                                deployToWildFly(artifact)
+                                break
+                            default:
+                                error "Unsupported deployment target: ${DEPLOYMENT_TARGET}"
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Verify API') {
+            steps {
+                script {
+                    sleep(time: 30, unit: 'SECONDS') // Wait for services to start
+
+                    if (DEPLOYMENT_TARGET == 'docker') {
+                        // Test API endpoint through Docker
+                        def apiUrl = "http://localhost:${DOCKER_PORT}/api/health"
+                        def response = sh(script: "curl -s -o /dev/null -w '%{http_code}' ${apiUrl}", returnStdout: true).trim()
+
+                        if (response != "200") {
+                            error "API verification failed. HTTP Status: ${response}"
+                        } else {
+                            echo "API verification successful"
+                        }
+                    } else {
+                        // For traditional deployments
+                        def port = DEPLOYMENT_TARGET == 'jetty' ? SERVER_PORT : '8080'
+                        def apiUrl = "http://localhost:${port}/${APP_name}/health"
+                        def response = sh(script: "curl -s -o /dev/null -w '%{http_code}' ${apiUrl}", returnStdout: true).trim()
+
+                        if (response != "200") {
+                            error "API verification failed. HTTP Status: ${response}"
+                        } else {
+                            echo "API verification successful"
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            // Clean up Docker containers if this was a Docker deployment
+            script {
+                if (DEPLOYMENT_TARGET == 'docker') {
+                    dir(PROJECT_DIR) {
+                        sh 'docker-compose down || true'
+                    }
+                }
+            }
+            cleanWs()
+        }
+        success {
+            echo "Pipeline succeeded"
+        }
+        failure {
+            echo "Pipeline failed"
+        }
+    }
+}
+
+def findLatestArtifact() {
+    def artifact = sh(script: """
+        ls -t ${PROJECT_DIR}/target/${APP_NAME}*.jar ${PROJECT_DIR}/target/${APP_NAME}*.war 2>/dev/null | head -1
+    """, returnStdout: true).trim()
+
+    if (!artifact) {
+        error "No deployable artifact found in target directory"
+    }
+    return artifact
+}
+
+def deployWithDocker() {
+    echo "Deploying with Docker Compose"
+    dir(PROJECT_DIR) {
+        // Stop and remove any existing containers
+        sh 'docker-compose down || true'
+
+        // Start the services
+        sh "docker-compose up -d"
+
+        // Wait for services to initialize
+        sleep(time: 30, unit: 'SECONDS')
+
+        // Verify containers are running
+        def containers = sh(script: 'docker-compose ps -q', returnStdout: true).trim()
+        if (!containers) {
+            error "Docker containers failed to start"
+        }
+    }
+    echo "Application deployed via Docker on port ${DOCKER_PORT}"
+}
+
+def deployToJetty(String artifactPath) {
+    echo "Deploying ${artifactPath} to Jetty"
+    sh """
+        pkill -f 'java.*jetty' || true
+        sleep 2
+        rm -f ${JETTY_HOME}/webapps/ROOT.war
+        cp ${artifactPath} ${JETTY_HOME}/webapps/ROOT.war
+        cd ${JETTY_HOME}
+        nohup bin/jetty.sh start -Djetty.http.port=${SERVER_PORT} > logs/jetty.log 2>&1 &
+    """
+    echo "Application deployed to Jetty on port ${SERVER_PORT}"
+}
+
+def deployToWildFly(String artifactPath) {
+    echo "Deploying ${artifactPath} to WildFly"
+    sh """
+        ${WILDFLY_HOME}/bin/jboss-cli.sh --connect --command=:shutdown || true
+        sleep 5
+        ${WILDFLY_HOME}/bin/jboss-cli.sh --connect --command="deploy ${artifactPath}"
+        nohup ${WILDFLY_HOME}/bin/standalone.sh > ${WILDFLY_HOME}/standalone/log/server.log 2>&1 &
+    """
+    echo "Application deployed to WildFly"
+}
