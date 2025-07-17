@@ -14,6 +14,9 @@
 
 # If change dockerfile ==> always do docker build
 
+# STAGE 1: Solve dependencies in container,
+#          Copy code in container,
+#          Package jar file
 FROM maven:3.8.4-openjdk-17 AS build_project
 #FROM openjdk:17 AS build_project
 
@@ -50,7 +53,8 @@ RUN mvn package -DskipTests
 #RUN #mvn install # pom.xml
 
 
-# STAGE 2
+# STAGE 2: COPY JAR file and resource file to /app/ folder insider container
+# Expose a Container port (but inside docker-compose you need to attach it to your own laptop/host port)
 FROM openjdk:17-jdk-slim AS run_application
 
 WORKDIR /app
@@ -69,5 +73,12 @@ ENV NAME Global
 # Commannd to run the jar
 ENTRYPOINT  ["java", "-jar", "/app/reservation-system.jar"]
 # CMD java -jar /app/reservation-system.jar
+
+
+#FROM tomcat:9.0
+#
+#EXPOSE 4001
+#
+#COPY target/*.jar /usr/local/tomcat/webapps/
 
 
