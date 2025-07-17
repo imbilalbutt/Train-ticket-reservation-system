@@ -37,7 +37,7 @@ services:
           - app-network
 
   reservation-system:
-    image: reservation-system:v5.0  # Use pre-built image, comment out build command if you want to use this line
+    image: reservation-system:v2.0  # Use pre-built image, comment out build command if you want to use this line
 #    build: .
     container_name: reservation-system
     restart: always
