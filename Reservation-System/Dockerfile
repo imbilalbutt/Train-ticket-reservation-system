@@ -22,10 +22,10 @@ FROM maven:3.8.4-openjdk-17 AS build_project
 #FROM openjdk:17 AS build_project
 
 #Deine env variables inside Docker container
-ENV POSTGRES_DB=lhr_rsv \
-    POSTGRES_USER=imbilalbutt \
-#    POSTGRES_PASSWORD=password
-    POSTGRES_PASSWORD=password@123
+ENV POSTGRES_DB=lhr_rsv
+ENV POSTGRES_USER=imbilalbutt
+ENV POSTGRES_PASSWORD=password
+#ENV POSTGRES_PASSWORD=password@123
 
 
 ## RUN mkdir -p /home/app
