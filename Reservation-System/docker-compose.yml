@@ -43,8 +43,11 @@ services:
     restart: always
     ports:
       - "9090:4000" # host:docker_container -> map docker_container port to localhost port
+#    depends_on:
+#      - postgres
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/lhr_rsv
       SPRING_DATASOURCE_USERNAME: imbilalbutt
