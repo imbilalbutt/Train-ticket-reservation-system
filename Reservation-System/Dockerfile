@@ -69,6 +69,13 @@ EXPOSE 4000
 
 # Define environmental variables
 ENV NAME Global
+#ENV PORT 5432
+#ENV MY_DATABASE_NAME lhr_rsv
+#
+#ENV SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:${PORT}/${MY_DATABASE_NAME}
+#ENV SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+#ENV SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+#ENV SPRING_JPA_HIBERNATE_DDL_AUTO=update
 
 # Commannd to run the jar
 ENTRYPOINT  ["java", "-jar", "/app/reservation-system.jar"]
@@ -82,3 +89,26 @@ ENTRYPOINT  ["java", "-jar", "/app/reservation-system.jar"]
 #COPY target/*.jar /usr/local/tomcat/webapps/
 
 
+### Concept
+
+
+# Build an image using Dockerfile. Give a name and tag to image using -t
+# Dockerfile creates environments in containter, and Docker-compose actually runs Dockerfile.
+# Basically, if you remember, you used to pull images / or create your own images using
+# some commands. But it was very annoyting to run same commands again and again.
+# Thus, to remove this issues of running same command again and again, all commands are
+# combined / composed in a single file called docker-compose
+
+## Docker run command to create image
+# docker run -p 8081:4000 --name reservation-system-v1 reservation-system:v1
+# docker run -p 8082:4000 --name reservation-system-v2 reservation-system:v2
+
+#To execute dockerfile: (Think of dockerfile as a recipe to create a custom dish (container image))
+#docker build -t name:tag .
+
+## Docker build image command
+# docker build -t reservation-system:v1 .
+# docker build -t reservation-system:v2 .
+
+# To execute docker-compose
+#docker-compose up
