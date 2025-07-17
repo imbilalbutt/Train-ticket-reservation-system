@@ -4,15 +4,17 @@ version: '3.8'
 
 # docker run --name myPostgres -p 5432:5432 -e POSTGRES_USER=imbilalbutt -e POSTGRES_PASSWORD=password  postgres:9.6
 
-# docker run -p --name reservation-system-v1 8081:4000 reservation-system:v1
+# docker run -p 8081:4000 --name reservation-system-v1  reservation-system:v1
 
-# docker run -p --name reservation-system-v4 3000:4000 reservation-system:v4
+# docker run -p 3000:4000 --name reservation-system-v4 reservation-system:v4
 
 # docker-compose -f docker-compose.yml up
 #  docker-compose -f docker-compose.yml up
 
 # docker-compose -f docker-compose.yml down
 
+
+# docker build -t reservation-system:v1.0 .
 
 
 services:
@@ -35,11 +37,12 @@ services:
           - app-network
 
   reservation-system:
-    build: .
+    image: reservation-system:v1  # Use pre-built image
+#    build: .
     container_name: reservation-system
     restart: always
     ports:
-      - "9090:4000"
+      - "9090:4000" # host:docker_container -> map docker_container port to localhost port
     depends_on:
       - postgres
     environment:
@@ -47,7 +50,7 @@ services:
       SPRING_DATASOURCE_USERNAME: imbilalbutt
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQL81Dialect
-      SERVER_PORT: 4000 # Must match application.properties
+      SERVER_PORT: 4000 # Must match EXPOSE (in dockerfile) and application.properties
       SERVER_SERVLET_CONTEXT_PATH: /Reservation-System
     networks:
       - app-network
