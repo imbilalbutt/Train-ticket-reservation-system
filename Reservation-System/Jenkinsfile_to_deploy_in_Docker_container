@@ -5,7 +5,7 @@ pipeline {
         PROJECT_DIR = 'Reservation-System'
         APP_NAME = 'reservation-system'
         GIT_REPO = 'https://github.com/imbilalbutt/Train-ticket-reservation-system.git'
-        BRANCH = 'Jetty-Server'
+        BRANCH = 'master'
         M2_HOME = '/Users/imbilalbutt/Downloads/apache-maven-3.9.11/bin'
         PATH = "${M2_HOME}:${PATH}"
         POSTGRES_JDBC_URL = 'jdbc:postgresql://localhost:5433/lhr_rsv'
