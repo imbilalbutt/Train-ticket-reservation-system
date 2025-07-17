@@ -6,6 +6,8 @@ version: '3.8'
 
 # docker run -p --name reservation-system-v1 8081:4000 reservation-system:v1
 
+# docker run -p --name reservation-system-v4 3000:4000 reservation-system:v4
+
 # docker-compose -f docker-compose.yml up
 #  docker-compose -f docker-compose.yml up
 
@@ -32,12 +34,12 @@ services:
     networks:
           - app-network
 
-  my-app:
+  reservation-system:
     build: .
     container_name: reservation-system
     restart: always
     ports:
-      - "8081:4000"
+      - "9090:4000"
     depends_on:
       - postgres
     environment:
@@ -45,6 +47,8 @@ services:
       SPRING_DATASOURCE_USERNAME: imbilalbutt
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQL81Dialect
+      SERVER_PORT: 4000 # Must match application.properties
+      SERVER_SERVLET_CONTEXT_PATH: /Reservation-System
     networks:
       - app-network
 

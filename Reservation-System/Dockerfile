@@ -11,6 +11,7 @@
 ## Docker run command
 # docker run -p 8081:4000 --name reservation-system-v1 reservation-system:v1
 # docker run -p 8082:4000 --name reservation-system-v2 reservation-system:v2
+# docker run -p 3000:4000 --name reservation-system-v4 reservation-system:4
 
 # If change dockerfile ==> always do docker build
 
@@ -76,6 +77,16 @@ ENV NAME Global
 #ENV SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
 #ENV SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
 #ENV SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+# These are defaults that can be overridden by docker-compose
+### Match with application.properties, and also put the same port in docker-compose
+# THis port number allocated port in DOCKER container (not in your local host machine)
+# This is where container will run Spring application
+ENV SERVER_PORT=4000
+ENV SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/lhr_rsv
+ENV SPRING_DATASOURCE_USERNAME=imbilalbutt
+ENV SPRING_DATASOURCE_PASSWORD=password
+ENV SPRING_JPA_HIBERNATE_DDL_AUTO=update
 
 # Commannd to run the jar
 ENTRYPOINT  ["java", "-jar", "/app/reservation-system.jar"]
