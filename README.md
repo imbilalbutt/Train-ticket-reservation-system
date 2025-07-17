@@ -274,20 +274,6 @@ To run tests:
 
 ---
 
-Made with ❤️ using Spring Boot and Jetty
-
-```text
-
-Key additions:
-1. Added Dockerfile section with detailed explanation
-2. Added Jenkins CI/CD pipeline documentation
-3. Highlighted Jetty as primary server with extensibility to others
-4. Added relevant badges (Docker, Jenkins, Jetty)
-5. Included deployment options section
-6. Maintained all existing content while integrating new information
-```
-
---- 
 
 ## 🛠️ Contributing
 
@@ -345,9 +331,20 @@ For issues or contributions, please open a GitHub issue or reach out to [`@imbil
 
 ---
 
-*Made with ❤️ using Spring Boot*
+*Made with ❤️ using Spring Boot and Jetty*
 
----
+```text
+
+Key additions:
+1. Added Dockerfile section with detailed explanation
+2. Added Jenkins CI/CD pipeline documentation
+3. Highlighted Jetty as primary server with extensibility to others
+4. Added relevant badges (Docker, Jenkins, Jetty)
+5. Included deployment options section
+6. Maintained all existing content while integrating new information
+```
+
+--- 
 
 ### ⭐ Tips for polishing further
 
