@@ -1,17 +1,28 @@
-CREATE TABLE IF NOT EXISTS public.users
-(
-    user_id bigint NOT NULL DEFAULT nextval('users_user_id_seq'::regclass),
-    created_by character varying(255) COLLATE pg_catalog."default",
-    created_date timestamp without time zone,
-    locked boolean NOT NULL,
-    modified_by character varying(255) COLLATE pg_catalog."default",
-    modified_date timestamp without time zone,
-    active_status boolean,
-    cell_number character varying(255) COLLATE pg_catalog."default",
-    cnic_number character varying(255) COLLATE pg_catalog."default",
-    first_name character varying(255) COLLATE pg_catalog."default",
-    home_address character varying(255) COLLATE pg_catalog."default",
-    last_name character varying(255) COLLATE pg_catalog."default",
-    role character varying(255) COLLATE pg_catalog."default",
-    CONSTRAINT users_pkey PRIMARY KEY (user_id)
-    )
+
+CREATE TABLE IF NOT EXISTS users (
+
+     user_id BIGSERIAL PRIMARY KEY,
+
+     created_by VARCHAR(255),
+     created_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+     is_non_locked BOOLEAN NOT NULL DEFAULT TRUE,
+     modified_by VARCHAR(255),
+     modified_date TIMESTAMP WITH TIME ZONE,
+     active_status BOOLEAN DEFAULT TRUE,
+
+     cell_number VARCHAR(15) UNIQUE,
+     cnic_number VARCHAR(15) UNIQUE,
+     email  VARCHAR(255) UNIQUE NOT NULL,
+     first_name VARCHAR(100) NOT NULL,
+     home_address TEXT,
+     last_name  VARCHAR(100) NOT NULL,
+     password VARCHAR(255) NOT NULL,
+     reconfirm_password VARCHAR(255) NOT NULL,
+     role VARCHAR(50) NOT NULL,
+     username VARCHAR(10) NOT NULL,
+
+-- Explicit naming conventions for constraints
+     CONSTRAINT uk_users_cell_number UNIQUE (cell_number),
+     CONSTRAINT uk_users_cnic_number UNIQUE (cnic_number),
+     CONSTRAINT uk_users_email UNIQUE (email)
+);

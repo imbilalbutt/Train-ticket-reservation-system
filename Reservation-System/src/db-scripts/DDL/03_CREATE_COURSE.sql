@@ -1,14 +1,17 @@
-CREATE TABLE IF NOT EXISTS public.course
+CREATE TABLE IF NOT EXISTS course
 (
-    course_id bigint NOT NULL DEFAULT nextval('course_course_id_seq'::regclass),
-    created_by character varying(255) COLLATE pg_catalog."default",
-    created_date timestamp without time zone,
-    locked boolean NOT NULL,
-    modified_by character varying(255) COLLATE pg_catalog."default",
-    modified_date timestamp without time zone,
-    active_status boolean,
-    course_code character varying(255) COLLATE pg_catalog."default",
-    course_name character varying(255) COLLATE pg_catalog."default",
-    credit_hours bigint,
+    course_id BIGSERIAL PRIMARY KEY,
+
+    created_by VARCHAR(255),
+    created_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    is_non_locked BOOLEAN NOT NULL DEFAULT TRUE,
+    modified_by VARCHAR(255),
+    modified_date TIMESTAMP WITH TIME ZONE,
+    active_status BOOLEAN DEFAULT TRUE,
+
+    course_code VARCHAR(255),
+    course_name VARCHAR(255),
+    credit_hours INT,
+
     CONSTRAINT course_pkey PRIMARY KEY (course_id)
 )

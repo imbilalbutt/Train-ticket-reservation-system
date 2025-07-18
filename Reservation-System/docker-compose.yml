@@ -16,15 +16,17 @@ version: '3.8'
 
 # docker build -t reservation-system:v1.0 .
 
+# docker exec -it my_postgres_db psql -U imbilalbutt -d lhr_rsv -c "SELECT * FROM users;"
 
 services:
   postgres:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+
+    container_name: my_postgres_db
     image: postgres:9.6
-    container_name: myPostgres
     restart: always
-    ports:
-#      - host port (my laptop) : container port
-      - "5432:5432"
 
 #    Environment variables
     environment:
@@ -32,9 +34,21 @@ services:
           POSTGRES_USER: imbilalbutt
           POSTGRES_PASSWORD: password
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/
+#     # SQL scripts will execute alphabetically
+      - ./src/db-scripts:/docker-entrypoint-initdb.d # Mount SQL scripts
+
+    ports:
+      #      - host port (my laptop) : container port
+      - "5432:5432"
+
     networks:
           - app-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U imbilalbutt -d lhr_rsv" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   reservation-system:
 #    image: reservation-system:v2.0  # Use pre-built image, comment out build command if you want to use this line
@@ -64,3 +78,4 @@ volumes:
 networks:
   app-network:
     driver: bridge
+

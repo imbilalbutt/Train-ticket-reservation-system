@@ -1,13 +1,16 @@
-CREATE TABLE IF NOT EXISTS public.station
+CREATE TABLE IF NOT EXISTS station
 (
-    station_id bigint NOT NULL DEFAULT nextval('station_station_id_seq'::regclass),
-    created_by character varying(255) COLLATE pg_catalog."default",
-    created_date timestamp without time zone,
-    locked boolean NOT NULL,
-    modified_by character varying(255) COLLATE pg_catalog."default",
-    modified_date timestamp without time zone,
-    active_status boolean,
-    city character varying(255) COLLATE pg_catalog."default",
-    station_code character varying(255) COLLATE pg_catalog."default",
-    CONSTRAINT station_pkey PRIMARY KEY (station_id)
+    station_id BIGSERIAL PRIMARY KEY,
+
+    created_by VARCHAR(255),
+    created_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    is_non_locked BOOLEAN NOT NULL DEFAULT TRUE,
+    modified_by VARCHAR(255),
+    modified_date TIMESTAMP WITH TIME ZONE,
+    active_status BOOLEAN DEFAULT TRUE,
+
+    city VARCHAR(100),
+    station_code VARCHAR(100)
+
+--     CONSTRAINT station_primary_key PRIMARY KEY (station_id)
 )
