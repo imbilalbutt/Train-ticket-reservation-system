@@ -1,0 +1,7 @@
+### GET request to example server
+GET http://localhost:9090/reservation-system/
+Content-Type: application/json
+
+{
+
+}

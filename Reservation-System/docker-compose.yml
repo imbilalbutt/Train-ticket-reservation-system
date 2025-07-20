@@ -24,8 +24,8 @@ services:
 #      context: .
 #      dockerfile: Dockerfile
 
-    container_name: my_postgres_db
-    image: postgres:9.6
+    container_name: reservation-system-db
+    image: postgres:9.3
     restart: always
 
 #    Environment variables
@@ -34,13 +34,13 @@ services:
           POSTGRES_USER: imbilalbutt
           POSTGRES_PASSWORD: password
     volumes:
-      - postgres_data:/var/lib/postgresql/
+      - reservation_system_data:/var/lib/postgresql/
 #     # SQL scripts will execute alphabetically
-      - ./src/db-scripts:/docker-entrypoint-initdb.d # Mount SQL scripts
+#      - ./src/db-scripts:/docker-entrypoint-initdb.d # Mount SQL scripts
 
     ports:
       #      - host port (my laptop) : container port
-      - "5432:5432"
+      - "5400:5432"
 
     networks:
           - app-network
@@ -63,17 +63,17 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/lhr_rsv
+      SPRING_DATASOURCE_URL: jdbc:postgresql://reservation-system-db:5432/lhr_rsv
       SPRING_DATASOURCE_USERNAME: imbilalbutt
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQL81Dialect
       SERVER_PORT: 4000 # Must match EXPOSE (in dockerfile) and application.properties
-      SERVER_SERVLET_CONTEXT_PATH: /Reservation-System
+      SERVER_SERVLET_CONTEXT_PATH: /reservation-system
     networks:
       - app-network
 
 volumes:
-  postgres_data:
+  reservation_system_data:
 
 networks:
   app-network:

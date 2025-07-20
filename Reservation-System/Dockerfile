@@ -38,7 +38,7 @@ COPY pom.xml .
 
 # Install dependencies
 # RUN can run any linux command
-RUN mvn dependency:go-offline
+RUN mvn dependency:go-offline -B
 
 # Copy the model training script into the container
 # copy src folder inside Container/app
@@ -60,12 +60,13 @@ FROM openjdk:17-jdk-slim AS run_application
 
 WORKDIR /app
 
-COPY --from=build_project /app/target/reservation-system.jar .
+COPY --from=build_project /app/target/reservation-system.jar ./app.jar
 # Copy the templates directory
 COPY --from=build_project  /app/src/main/resources/ ./resources/
 
 
 # Expose container port, container will listen here, (but still you need to attach it to your host port)
+# Jetty server port inside CONTAINER
 EXPOSE 4000
 
 # Define environmental variables
@@ -83,14 +84,17 @@ ENV NAME Global
 # THis port number allocated port in DOCKER container (not in your local host machine)
 # This is where container will run Spring application
 ENV SERVER_PORT=4000
-ENV SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/lhr_rsv
+ENV SPRING_DATASOURCE_URL=jdbc:postgresql://reservation-system:5432/lhr_rsv
 ENV SPRING_DATASOURCE_USERNAME=imbilalbutt
 ENV SPRING_DATASOURCE_PASSWORD=password
 ENV SPRING_JPA_HIBERNATE_DDL_AUTO=update
+ENV SPRING_SQL_INIT_MODE=always
 
 # Commannd to run the jar
-ENTRYPOINT  ["java", "-jar", "/app/reservation-system.jar"]
+#ENTRYPOINT  ["java", "-jar", "/app/reservation-system.jar"]
+ENTRYPOINT  ["java", "-jar", "app.jar"]
 # CMD java -jar /app/reservation-system.jar
+
 
 
 #FROM tomcat:9.0
@@ -127,3 +131,22 @@ ENTRYPOINT  ["java", "-jar", "/app/reservation-system.jar"]
 
 # Execute a shell command in docker
 # docker exec -it myPostgres psql -U imbilalbutt -d lhr_rsv -c "SELECT * FROM users;"
+
+
+
+# Why it was not connecting to db?
+# First create a docker container of postgres db
+
+
+# docker run == is equal to == docker compose
+#docker run -p 5400:5432 \
+#-v  /Users/imbilalbutt/Developer/Projects2/Java/reservation_system_data:/var/lib/postgresql/data \
+#--env POSTGRES_USER=admin_user \
+#--env POSTGRES_PASSWORD=password \
+#--env POSTGRES_DB=db \
+#--name reservation-system-db \
+#--pull missing \
+#--network app-network \
+# postgres:9.3
+
+# then run

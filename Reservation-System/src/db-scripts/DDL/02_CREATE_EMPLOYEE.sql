@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS employee
 
     fk_user_id bigint,
 
-    CONSTRAINT employee_primary_key PRIMARY KEY (employee_id),
+--     CONSTRAINT employee_primary_key PRIMARY KEY (employee_id),
 
     CONSTRAINT foreign_key_user FOREIGN KEY (fk_user_id)
     REFERENCES users (user_id) MATCH SIMPLE
