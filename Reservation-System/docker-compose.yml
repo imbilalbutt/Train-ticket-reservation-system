@@ -19,7 +19,8 @@ version: '3.8'
 # docker exec -it my_postgres_db psql -U imbilalbutt -d lhr_rsv -c "SELECT * FROM users;"
 
 services:
-  postgres:
+  #       Should match with "db-service" at line 23, 68, 73.
+  db-service:
 #    build:
 #      context: .
 #      dockerfile: Dockerfile
@@ -52,21 +53,29 @@ services:
 
   reservation-system:
 #    image: reservation-system:v2.0  # Use pre-built image, comment out build command if you want to use this line
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+
     container_name: reservation-system
     restart: always
     ports:
-      - "9090:4000" # host:docker_container -> map docker_container port to localhost port
+      - "9000:4000" # host:docker_container -> map docker_container port to localhost port
 #    depends_on:
 #      - postgres
     depends_on:
-      postgres:
+      #       Should match with "db-service" at line 23, 68, 73.
+      db-service:
         condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://reservation-system-db:5432/lhr_rsv
+
+#    db-service ==> service _ name (++++) service will be used in jdbc url making. # Should match with "db-service" at line 23, 68, 73.
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db-service:5432/lhr_rsv
       SPRING_DATASOURCE_USERNAME: imbilalbutt
       SPRING_DATASOURCE_PASSWORD: password
-      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQL81Dialect
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_SQL_INIT_MODE: always
+#      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQL81Dialect
       SERVER_PORT: 4000 # Must match EXPOSE (in dockerfile) and application.properties
       SERVER_SERVLET_CONTEXT_PATH: /reservation-system
     networks:
