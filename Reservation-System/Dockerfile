@@ -84,7 +84,8 @@ ENV NAME Global
 # THis port number allocated port in DOCKER container (not in your local host machine)
 # This is where container will run Spring application
 ENV SERVER_PORT=4000
-ENV SPRING_DATASOURCE_URL=jdbc:postgresql://reservation-system:5432/lhr_rsv
+#ENV SPRING_DATASOURCE_URL=jdbc:postgresql://reservation-system:5432/lhr_rsv
+ENV SPRING_DATASOURCE_URL=jdbc:postgresql://db-service:5432/lhr_rsv
 ENV SPRING_DATASOURCE_USERNAME=imbilalbutt
 ENV SPRING_DATASOURCE_PASSWORD=password
 ENV SPRING_JPA_HIBERNATE_DDL_AUTO=update
